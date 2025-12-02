@@ -63,19 +63,19 @@ pub const TCP_CLOSING: u8 = 0x0B;
 
 /// Basic TCP connection information from /proc/net/tcp.
 /// Contains socket addresses and queue states, but not detailed TCP metrics.
-/// Use with get_tcp_connection_data_via_netlink() for complete information.
+/// Use with `get_tcp_connection_data_via_netlink()` for complete information.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConnectionInfo {
     /// Local socket address (IP:port), e.g., "192.168.1.5:8080"
     pub local_address: String,
     /// Remote socket address (IP:port), e.g., "10.0.1.1:5000"
     pub remote_address: String,
-    /// Human-readable state: "ESTABLISHED", "TIME_WAIT", "LISTEN", etc.
+    /// Human-readable state: "ESTABLISHED", "`TIME_WAIT`", "LISTEN", etc.
     pub state: String,
     /// Numeric TCP state code (0x01, 0x06, etc.)
     pub state_code: u8,
     /// Bytes waiting to be transmitted. High value = sender stalled.
-    /// Compare against SEND_QUEUE_CRITICAL, SEND_QUEUE_WARNING for health assessment.
+    /// Compare against `SEND_QUEUE_CRITICAL`, `SEND_QUEUE_WARNING` for health assessment.
     pub send_queue_bytes: u32,
     /// Bytes received but not yet read by application.
     /// Usually low unless receiver is slow or buffer is full.
@@ -86,16 +86,16 @@ pub struct ConnectionInfo {
 // DATA STRUCTURES: TCP Metrics from Kernel
 // ============================================================================
 
-/// Low-level TCP metrics extracted from kernel tcp_info structure.
+/// Low-level TCP metrics extracted from kernel `tcp_info` structure.
 /// These metrics are the foundation for connection health assessment.
-/// Available from both Netlink INET_DIAG (modern, 0.1-0.5ms) and ss command (legacy, 5-15ms).
+/// Available from both Netlink `INET_DIAG` (modern, 0.1-0.5ms) and ss command (legacy, 5-15ms).
 ///
 /// Extended fields are optional and depend on kernel version:
-/// - Kernel 3.10 (RHEL 7): Core metrics only; bytes_sent/bytes_retrans may be 0
+/// - Kernel 3.10 (RHEL 7): Core metrics only; `bytes_sent/bytes_retrans` may be 0
 /// - Kernel 4.6+ (RHEL 8+): Most extended metrics available
 /// - Kernel 4.9+ (RHEL 8+): Bottleneck detection metrics available
 ///
-/// Use assess_connection_health_v2() for comprehensive evaluation combining these metrics.
+/// Use `assess_connection_health_v2()` for comprehensive evaluation combining these metrics.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TcpMetrics {
     // ========================================================================
@@ -115,7 +115,7 @@ pub struct TcpMetrics {
     /// Health indicators:
     /// - Low variance: Stable path, predictable latency
     /// - High variance: Network congestion, routing changes, packet prioritization
-    /// Interpretation: If rtt_var_ms is > 50% of rtt_ms, path is unstable
+    /// Interpretation: If `rtt_var_ms` is > 50% of `rtt_ms`, path is unstable
     pub rtt_var_ms: f64,
 
     /// Total bytes successfully sent on this connection (cumulative counter).
@@ -128,7 +128,7 @@ pub struct TcpMetrics {
     /// - 0: No packet loss detected (excellent)
     /// - > 0: Packet loss occurred (poor network quality)
     /// - High value: Persistent network issues or congestion
-    /// Interpretation: Compare to bytes_sent to calculate loss rate
+    /// Interpretation: Compare to `bytes_sent` to calculate loss rate
     pub bytes_retrans: u64,
 
     /// Send congestion window size (in packets, not bytes).
@@ -137,7 +137,7 @@ pub struct TcpMetrics {
     /// - < 3: Connection just started (slow start) or severely congested
     /// - 10-50: Normal range for typical connections
     /// - > 100: High-bandwidth connection operating efficiently
-    /// Interpretation: Compare cwnd to unacked_packets (high ratio = congestion)
+    ///   > Interpretation: Compare cwnd to unacked_packets (high ratio = congestion)
     pub congestion_window: u32,
 
     /// Number of packets sent but not yet acknowledged.
@@ -148,12 +148,12 @@ pub struct TcpMetrics {
     /// - > 0 AND send_queue > 0: Stalling (sender waiting for ACKs)
     pub unacked_packets: u32,
 
-    /// Count of retransmission events (separate from bytes_retrans).
+    /// Count of retransmission events (separate from `bytes_retrans`).
     /// This counts HOW MANY TIMES TCP had to resend, not the total bytes.
     /// Health indicators:
     /// - 0: No retransmissions
     /// - > 0: Packet loss occurred; connection may be recovering
-    /// Note: This is current state; may be 0 even if connection had retrans earlier
+    ///   > Note: This is current state; may be 0 even if connection had retrans earlier
     pub retrans_events: u32,
 
     // ========================================================================
@@ -163,8 +163,8 @@ pub struct TcpMetrics {
     /// Minimum RTT observed on this connection (milliseconds, kernel 4.6+).
     /// Health indicators:
     /// - Establishes baseline latency for this path
-    /// - (rtt_ms - min_rtt_ms) = current latency overhead due to congestion
-    /// Interpretation: If current RTT >> min_rtt, congestion is adding delay
+    /// - (`rtt_ms` - `min_rtt_ms`) = current latency overhead due to congestion
+    /// Interpretation: If current RTT >> `min_rtt`, congestion is adding delay
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_rtt_ms: Option<f64>,
 
@@ -178,11 +178,11 @@ pub struct TcpMetrics {
     pub delivery_rate_bps: Option<u64>,
 
     /// Total packets lost (cumulative, kernel 3.10+).
-    /// Unlike bytes_retrans, this counts packets (not bytes retransmitted).
+    /// Unlike `bytes_retrans`, this counts packets (not bytes retransmitted).
     /// Health indicators:
     /// - 0: No packet loss
     /// - > 0: Network quality issues
-    /// Interpretation: High lost_packets / bytes_sent = poor link quality
+    ///   > Interpretation: High lost_packets / bytes_sent = poor link quality
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lost_packets: Option<u32>,
 
@@ -208,7 +208,7 @@ pub struct TcpMetrics {
 
     /// Cumulative time this connection actively transmitted (microseconds, kernel 4.9+).
     /// Useful for calculating connection utilization.
-    /// Utilization = busy_time_us / connection_lifetime_us
+    /// Utilization = `busy_time_us` / `connection_lifetime_us`
     /// Health indicators:
     /// - High utilization (90%+): Connection constantly sending; may be saturated
     /// - Medium utilization (30-70%): Normal usage
@@ -217,7 +217,7 @@ pub struct TcpMetrics {
     pub busy_time_us: Option<u64>,
 
     /// Total retransmissions over entire connection lifetime (kernel 3.10+).
-    /// Different from retrans_events (current state) - this is historical total.
+    /// Different from `retrans_events` (current state) - this is historical total.
     /// Health indicators:
     /// - 0: No retransmissions ever
     /// - > 0: Past packet loss events
@@ -245,7 +245,7 @@ pub struct TcpMetrics {
     /// - 100-1000ms: Recent activity
     /// - > 1000ms: Connection idle or very slow
     /// - > 60000ms: Likely stale connection (should be closed)
-    /// Use case: Detect zombie connections that haven't sent data in long time
+    ///   > Use case: Detect zombie connections that haven't sent data in long time
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_data_sent_ms: Option<u32>,
 
@@ -253,7 +253,7 @@ pub struct TcpMetrics {
     /// Maximum packet size without fragmentation on this path.
     /// Common values:
     /// - 1500: Standard Ethernet
-    /// - 1492: PPPoE (8 bytes less for protocol header)
+    /// - 1492: `PPPoE` (8 bytes less for protocol header)
     /// - 9000: Jumbo frames (high-performance networks)
     /// - < 1500: Path includes tunnels, VPNs, or other constraints
     /// Health impact: Lower MTU reduces throughput (more packets needed per byte)
@@ -330,11 +330,11 @@ pub const fn default_true() -> bool {
 
 /// HTTP response for /monitor endpoint.
 /// Enum variants handle both single and multiple connection responses.
-/// Note: TcpMetrics is boxed (425 bytes → 8 byte pointer) to optimize enum size.
+/// Note: `TcpMetrics` is boxed (425 bytes → 8 byte pointer) to optimize enum size.
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum MonitorResponse {
-    /// Response for single connection query (when remote_port specified)
+    /// Response for single connection query (when `remote_port` specified)
     Single {
         timestamp: u64,
         found: bool,
@@ -347,7 +347,7 @@ pub enum MonitorResponse {
         #[serde(skip_serializing_if = "Option::is_none")]
         error: Option<String>,
     },
-    /// Response for multiple connections query (when remote_port omitted)
+    /// Response for multiple connections query (when `remote_port` omitted)
     Multiple {
         timestamp: u64,
         count: usize,
@@ -392,7 +392,7 @@ pub fn get_tcp_state_name(state: u8) -> &'static str {
     }
 }
 
-/// Parse hexadecimal IP from /proc/net/tcp format to IPv4Addr.
+/// Parse hexadecimal IP from /proc/net/tcp format to `IPv4Addr`.
 /// /proc/net/tcp stores IP addresses in hex with little-endian byte order.
 /// Example: "C0A80105" in /proc → 192.168.1.5 in dotted decimal
 /// Internal helper for parsing connection data from kernel.
@@ -414,7 +414,7 @@ fn parse_hex_ipv4(hex_str: &str) -> Result<Ipv4Addr, String> {
 
 /// Parse address from /proc/net/tcp format (hex:port) to (IP, port) tuple.
 /// Example: "C0A80105:1F90" → (192.168.1.5, 8080)
-/// Uses split_once() for efficiency (avoids heap allocation).
+/// Uses `split_once()` for efficiency (avoids heap allocation).
 #[inline]
 fn parse_proc_address(addr_str: &str) -> Result<(IpAddr, u16), String> {
     let (ip_str, port_str) = addr_str.split_once(':').ok_or("Invalid address format")?;
@@ -429,7 +429,7 @@ fn parse_proc_address(addr_str: &str) -> Result<(IpAddr, u16), String> {
 // ============================================================================
 
 /// Find all TCP connections in /proc/net/tcp matching the specified 4-tuple filters.
-/// Returns up to MAX_CONNECTIONS results. Critical for enumeration in monitoring queries.
+/// Returns up to `MAX_CONNECTIONS` results. Critical for enumeration in monitoring queries.
 ///
 /// Optimized with early filtering to avoid expensive parsing on non-matching lines:
 /// 1. Check TCP state first (cheapest comparison)
@@ -699,10 +699,10 @@ pub fn get_tcp_metrics_via_ss(
 // NETLINK IMPLEMENTATION: Direct kernel communication (recommended)
 // ============================================================================
 
-/// Query TCP connection metrics via Netlink INET_DIAG protocol.
+/// Query TCP connection metrics via Netlink `INET_DIAG` protocol.
 /// Direct kernel communication without subprocess overhead.
 /// Wrapper for backwards compatibility; new code should use
-/// get_tcp_connection_data_via_netlink() for full connection data.
+/// `get_tcp_connection_data_via_netlink()` for full connection data.
 /// Performance: 0.1-0.5ms per query (10-50x faster than ss command).
 #[cfg(all(target_os = "linux", feature = "netlink"))]
 pub fn get_tcp_metrics_via_netlink(
@@ -719,11 +719,11 @@ pub fn get_tcp_metrics_via_netlink(
     Ok(tcp_info_to_metrics(&conn_data.tcp_info))
 }
 
-/// Get complete TCP connection data via Netlink INET_DIAG (recommended).
-/// Returns full tcp_info structure plus queue sizes and TCP state.
+/// Get complete TCP connection data via Netlink `INET_DIAG` (recommended).
+/// Returns full `tcp_info` structure plus queue sizes and TCP state.
 /// This is the modern API for comprehensive connection health assessment.
 /// Performance: 0.1-0.5ms per query. Preferred over ss command.
-/// Use with assess_connection_health_v2() for best results.
+/// Use with `assess_connection_health_v2()` for best results.
 #[cfg(all(target_os = "linux", feature = "netlink"))]
 pub fn get_tcp_connection_data_via_netlink(
     local_ip: &str,
@@ -762,7 +762,7 @@ pub fn get_tcp_metrics_batch_netlink(
 }
 
 /// Get complete connection data for multiple connections via Netlink (batch).
-/// Returns full tcp_info, queue sizes, and TCP state for all connections.
+/// Returns full `tcp_info`, queue sizes, and TCP state for all connections.
 /// Batch optimization: single kernel query instead of N individual queries.
 #[cfg(all(target_os = "linux", feature = "netlink"))]
 pub fn get_tcp_connection_data_batch_netlink(
@@ -940,7 +940,7 @@ fn parse_ss_batch_output(
 
 /// Assess connection health based on current TCP metrics alone.
 /// Evaluates queue accumulation, retransmissions, RTT elevation, and flow control.
-/// Baseline assessment without historical context; see assess_connection_health_with_history()
+/// Baseline assessment without historical context; see `assess_connection_health_with_history()`
 /// for enhanced assessment with trend detection.
 #[must_use]
 pub fn assess_connection_health(
@@ -1062,7 +1062,7 @@ pub fn extract_remote_parts(conn_addr: &str) -> (String, u16) {
 /// - Recovery signals (improving from degraded state)
 ///
 /// Use this for continuous monitoring where you collect multiple samples.
-/// For single-sample queries, use assess_connection_health() instead.
+/// For single-sample queries, use `assess_connection_health()` instead.
 #[must_use]
 pub fn assess_connection_health_with_history(
     conn_info: &ConnectionInfo,
@@ -1153,14 +1153,14 @@ pub fn assess_connection_health_with_history(
     health
 }
 
-/// Assess connection health using TcpConnectionData (modern API, recommended).
-/// Direct evaluation without intermediate TcpMetrics conversion.
+/// Assess connection health using `TcpConnectionData` (modern API, recommended).
+/// Direct evaluation without intermediate `TcpMetrics` conversion.
 /// This is the preferred health assessment function for Netlink-based queries.
 ///
 /// Advantages over legacy API:
 /// - Simpler: No struct conversion required
 /// - Faster: Eliminates allocation and field copying
-/// - More accurate: Uses full tcp_info data with proper unit conversion
+/// - More accurate: Uses full `tcp_info` data with proper unit conversion
 /// - Type-safe: Queue data can't be lost during conversion
 ///
 /// Evaluates the same factors as legacy API (queue, retransmissions, RTT, flow control)
@@ -1335,7 +1335,7 @@ pub fn assess_connection_health_v2(
     }
 }
 
-/// ConnectionWithHealth comparison implementation.
+/// `ConnectionWithHealth` comparison implementation.
 /// Sorts by health score descending (higher score = worse = comes first),
 /// then by send queue size if scores are equal (higher queue = worse).
 impl ConnectionWithHealth {

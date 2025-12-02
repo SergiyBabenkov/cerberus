@@ -27,7 +27,7 @@ use std::time::{Duration, Instant};
 /// Maximum number of historical samples to keep per connection (10 samples)
 ///
 /// === TECHNICAL ===
-/// Each TcpHealthSample is ~160 bytes
+/// Each `TcpHealthSample` is ~160 bytes
 /// 10 samples = ~1.6 KB per connection
 /// With 100 connections = ~160 KB total
 ///
@@ -56,7 +56,7 @@ const MA_SHORT_WINDOW: usize = 3;
 /// No data sent for >1.5 seconds = EARLY WARNING of frozen send-side
 ///
 /// === TECHNICAL ===
-/// Measures tcpi_last_data_sent_ms from kernel tcp_info structure.
+/// Measures `tcpi_last_data_sent_ms` from kernel `tcp_info` structure.
 ///
 /// === WHY 1500 MS? ===
 /// - Typical application keepalive: 2-5 seconds (we detect issues faster)
@@ -71,7 +71,7 @@ const STALE_SUSPECT_SEND_MS: u32 = 1500;
 /// No ACK received for >1.5 seconds = EARLY WARNING of frozen receive-side
 ///
 /// === TECHNICAL ===
-/// Measures tcpi_last_ack_recv_ms from kernel tcp_info structure.
+/// Measures `tcpi_last_ack_recv_ms` from kernel `tcp_info` structure.
 ///
 /// === WHY SEPARATE FROM SEND? ===
 /// Directional detection:
@@ -85,7 +85,7 @@ const STALE_SUSPECT_RECV_MS: u32 = 1500;
 /// No data sent for >3 seconds = CONFIRMED DEAD (send-side frozen)
 ///
 /// === TECHNICAL ===
-/// Measures tcpi_last_data_sent_ms from kernel tcp_info structure.
+/// Measures `tcpi_last_data_sent_ms` from kernel `tcp_info` structure.
 ///
 /// === WHY 3000 MS? ===
 /// - 2x the suspect threshold (avoids flapping on borderline cases)
@@ -105,7 +105,7 @@ const STALE_CONFIRMED_RECV_MS: u32 = 3000;
 /// Half-open detection: no ACK received for >1 second (fast threshold)
 ///
 /// === TECHNICAL ===
-/// Measures tcpi_last_ack_recv_ms from kernel tcp_info structure.
+/// Measures `tcpi_last_ack_recv_ms` from kernel `tcp_info` structure.
 /// Kernel 3.10+ (RHEL 7+)
 ///
 /// === HALF-OPEN CONNECTIONS ===
@@ -128,7 +128,7 @@ const HALF_OPEN_NO_ACK_MS: u32 = 1000;
 /// Critical packet loss ratio threshold (1%)
 ///
 /// === TECHNICAL ===
-/// Calculated as: bytes_retrans / bytes_sent
+/// Calculated as: `bytes_retrans` / `bytes_sent`
 /// Kernel 5.5+ (RHEL 9+) for byte-level counters
 ///
 /// === WHY 1%? ===
@@ -142,10 +142,10 @@ const HALF_OPEN_NO_ACK_MS: u32 = 1000;
 /// This threshold is kept for future bulk transfer monitoring.
 const LOSS_CRITICAL_RATE_THRESHOLD: f64 = 0.01;
 
-/// RTT drift threshold (current_rtt / min_rtt baseline)
+/// RTT drift threshold (`current_rtt` / `min_rtt` baseline)
 ///
 /// === TECHNICAL ===
-/// Requires tcpi_min_rtt from kernel tcp_info structure.
+/// Requires `tcpi_min_rtt` from kernel `tcp_info` structure.
 /// Kernel 4.6+ (RHEL 8+)
 ///
 /// === WHAT THIS DETECTS ===
@@ -167,7 +167,7 @@ const RTT_DRIFT_THRESHOLD: f64 = 3.0;
 ///
 /// === TECHNICAL ===
 /// Calculated as: rttvar / rtt
-/// Both from kernel tcp_info structure
+/// Both from kernel `tcp_info` structure
 /// Kernel 3.10+ (RHEL 7+)
 ///
 /// === WHAT THIS DETECTS ===
@@ -192,7 +192,7 @@ const JITTER_INDEX_THRESHOLD: f64 = 0.35;
 /// Receiver window limitation percentage (40%)
 ///
 /// === TECHNICAL ===
-/// Calculated as: rwnd_limited_us / busy_time_us
+/// Calculated as: `rwnd_limited_us` / `busy_time_us`
 /// Kernel 4.9+ (RHEL 8+)
 ///
 /// === WHAT THIS DETECTS ===
@@ -204,7 +204,7 @@ const JITTER_INDEX_THRESHOLD: f64 = 0.35;
 /// - rwnd: Receiver says "I can accept N bytes"
 /// - cwnd: Sender estimates network capacity
 ///
-/// If rwnd_limited is high: Receiver can't keep up with sender.
+/// If `rwnd_limited` is high: Receiver can't keep up with sender.
 ///
 /// === WHY 0.4 (40%)? ===
 /// - Normal (0-20%): Occasional receiver backpressure
@@ -215,7 +215,7 @@ const RECV_LIMITED_PCT_THRESHOLD: f64 = 0.4;
 /// Send buffer limitation percentage (40%)
 ///
 /// === TECHNICAL ===
-/// Calculated as: sndbuf_limited_us / busy_time_us
+/// Calculated as: `sndbuf_limited_us` / `busy_time_us`
 /// Kernel 4.9+ (RHEL 8+)
 ///
 /// === WHAT THIS DETECTS ===
@@ -223,13 +223,13 @@ const RECV_LIMITED_PCT_THRESHOLD: f64 = 0.4;
 /// APPLICATION is the bottleneck (not writing data fast enough).
 ///
 /// === BOTTLENECK ANALYSIS ===
-/// TCP send buffer (SO_SNDBUF) holds data waiting to be sent.
+/// TCP send buffer (`SO_SNDBUF`) holds data waiting to be sent.
 /// If application doesn't write fast enough:
 /// - Send buffer becomes empty
 /// - TCP has nothing to send
 /// - Network link is underutilized
 ///
-/// If sndbuf_limited is high: Application is too slow for the network.
+/// If `sndbuf_limited` is high: Application is too slow for the network.
 ///
 /// === WHY 0.4 (40%)? ===
 /// Same reasoning as receiver limitation threshold.
@@ -239,7 +239,7 @@ const SENDER_LIMITED_PCT_THRESHOLD: f64 = 0.4;
 ///
 /// === TECHNICAL ===
 /// Calculated as: rto / srtt (retransmit timeout / smoothed RTT)
-/// From kernel tcp_info structure
+/// From kernel `tcp_info` structure
 /// Kernel 3.10+ (RHEL 7+)
 ///
 /// === WHAT THIS DETECTS ===
@@ -262,19 +262,19 @@ const RTO_RATIO_THRESHOLD: f64 = 4.0;
 /// TCP state constant: ESTABLISHED connections (value = 1)
 ///
 /// === TECHNICAL ===
-/// From Linux kernel tcp_states.h
-/// TCP_ESTABLISHED = 1 (active connection with data flow)
+/// From Linux kernel `tcp_states.h`
+/// `TCP_ESTABLISHED` = 1 (active connection with data flow)
 ///
 /// === USAGE ===
 /// Health metrics only meaningful for ESTABLISHED connections.
-/// Other states (SYN_SENT, CLOSE_WAIT, etc.) don't apply.
+/// Other states (`SYN_SENT`, `CLOSE_WAIT`, etc.) don't apply.
 const TCP_ESTABLISHED: u8 = 1;
 
 /// Congestion window decrease detection threshold (2 segments)
 ///
 /// === TECHNICAL ===
 /// Measured in segments (typical segment = 1460 bytes)
-/// From kernel tcp_info structure (tcpi_snd_cwnd)
+/// From kernel `tcp_info` structure (`tcpi_snd_cwnd`)
 /// Kernel 3.10+ (RHEL 7+)
 ///
 /// === WHAT THIS DETECTS ===
@@ -327,9 +327,9 @@ pub type HealthValue = HealthMetric<f64>;
 ///
 /// === WHY OPTIONAL? ===
 /// Some metrics require kernel features not available on all systems:
-/// - RTT drift requires tcpi_min_rtt (kernel 4.6+)
-/// - Bottleneck detection requires tcpi_busy_time (kernel 4.9+)
-/// - Loss rate requires tcpi_bytes_sent (kernel 5.5+)
+/// - RTT drift requires `tcpi_min_rtt` (kernel 4.6+)
+/// - Bottleneck detection requires `tcpi_busy_time` (kernel 4.9+)
+/// - Loss rate requires `tcpi_bytes_sent` (kernel 5.5+)
 pub type OptionalHealthMetric<T> = Option<HealthMetric<T>>;
 
 /// Snapshot of TCP queue sizes at a specific time
@@ -340,7 +340,7 @@ pub type OptionalHealthMetric<T> = Option<HealthMetric<T>>;
 ///
 /// === COPY TRAIT ===
 /// All fields are primitive types (safe to bitwise copy).
-/// Assignment creates copy automatically (no .clone() needed).
+/// Assignment creates copy automatically (no .`clone()` needed).
 /// Efficient for stack operations.
 #[derive(Debug, Clone, Copy)]
 pub struct QueueSample {
@@ -378,7 +378,7 @@ impl QueueSample {
 /// Comprehensive TCP connection health sample (~160 bytes)
 ///
 /// === PURPOSE ===
-/// Stores all TCP_INFO fields needed for advanced health detection:
+/// Stores all `TCP_INFO` fields needed for advanced health detection:
 /// - Stale/dead connection detection
 /// - Half-open connection detection
 /// - Packet loss and retransmission tracking
@@ -395,13 +395,13 @@ impl QueueSample {
 /// === KERNEL VERSION COMPATIBILITY ===
 /// - Fields use 0 for unavailable data (rather than Option<T>)
 /// - Kernel 3.10+: Basic fields
-/// - Kernel 4.6+: Extended fields (min_rtt, delivery_rate)
-/// - Kernel 4.9+: Bottleneck fields (busy_time, rwnd_limited)
-/// - Kernel 5.5+: Byte counters (bytes_sent, bytes_retrans)
+/// - Kernel 4.6+: Extended fields (`min_rtt`, `delivery_rate`)
+/// - Kernel 4.9+: Bottleneck fields (`busy_time`, `rwnd_limited`)
+/// - Kernel 5.5+: Byte counters (`bytes_sent`, `bytes_retrans`)
 ///
 /// === COPY TRAIT ===
 /// All fields are primitives (safe to bitwise copy).
-/// Assignment creates copy automatically (no .clone() needed).
+/// Assignment creates copy automatically (no .`clone()` needed).
 #[derive(Debug, Clone, Copy)]
 pub struct TcpHealthSample {
     // === TIMESTAMP ===
@@ -420,25 +420,25 @@ pub struct TcpHealthSample {
     pub recv_queue_bytes: u32,
 
     // === TCP STATE AND TIMING ===
-    /// TCP state (1=ESTABLISHED, 2=SYN_SENT, etc.)
+    /// TCP state (1=ESTABLISHED, `2=SYN_SENT`, etc.)
     /// Most health metrics only apply to ESTABLISHED connections
     pub tcp_state: u8,
 
-    /// Milliseconds since last data sent (tcpi_last_data_sent)
+    /// Milliseconds since last data sent (`tcpi_last_data_sent`)
     /// Used for send-side stale detection
     /// High: Send-side frozen (application not sending)
     /// Low: Send-side active (data flowing)
     /// Kernel: 3.10+ (RHEL 7+)
     pub last_data_sent_ms: u32,
 
-    /// Milliseconds since last ACK received (tcpi_last_ack_recv)
+    /// Milliseconds since last ACK received (`tcpi_last_ack_recv`)
     /// Used for receive-side stale and half-open detection
     /// High: Peer not acknowledging (peer dead or return path broken)
     /// Low: Peer responding normally
     /// Kernel: 3.10+ (RHEL 7+)
     pub last_ack_recv_ms: u32,
 
-    /// Milliseconds since last data received (tcpi_last_data_recv)
+    /// Milliseconds since last data received (`tcpi_last_data_recv`)
     /// Used for receive-side stale detection
     /// High: No data received (peer not sending)
     /// Low: Data arriving
@@ -446,64 +446,64 @@ pub struct TcpHealthSample {
     pub last_data_recv_ms: u32,
 
     // === RTT METRICS ===
-    /// Smoothed round-trip time in microseconds (tcpi_rtt)
+    /// Smoothed round-trip time in microseconds (`tcpi_rtt`)
     /// Average RTT over recent samples
     /// High: Slow network or congestion
     /// Low: Fast, responsive connection
     /// Kernel: 3.10+ (RHEL 7+)
     pub rtt_us: u32,
 
-    /// RTT variance in microseconds (tcpi_rttvar)
+    /// RTT variance in microseconds (`tcpi_rttvar`)
     /// Measures RTT stability
     /// High: Unstable latency (jitter)
     /// Low: Stable, predictable latency
     /// Kernel: 3.10+ (RHEL 7+)
     pub rtt_var_us: u32,
 
-    /// Minimum RTT observed in microseconds (tcpi_min_rtt)
+    /// Minimum RTT observed in microseconds (`tcpi_min_rtt`)
     /// Baseline RTT (clean path, no congestion)
     /// 0 if unavailable (kernel < 4.6)
-    /// Used for RTT drift calculation (current_rtt / min_rtt)
+    /// Used for RTT drift calculation (`current_rtt` / `min_rtt`)
     /// Kernel: 4.6+ (RHEL 8+)
     pub min_rtt_us: u32,
 
     // === CONGESTION AND PACKET COUNTS ===
-    /// Congestion window size in segments (tcpi_snd_cwnd)
+    /// Congestion window size in segments (`tcpi_snd_cwnd`)
     /// TCP's estimate of safe data in flight
     /// High: Large window (network has capacity)
     /// Low: Small window (congestion, recovery)
     /// Kernel: 3.10+ (RHEL 7+)
     pub snd_cwnd: u32,
 
-    /// Slow start threshold in segments (tcpi_snd_ssthresh)
+    /// Slow start threshold in segments (`tcpi_snd_ssthresh`)
     /// Threshold below which TCP is in congestion avoidance
     /// High: Connection recovered from congestion
     /// Low: Connection experienced loss (reduced threshold)
     /// Kernel: 3.10+ (RHEL 7+)
     pub snd_ssthresh: u32,
 
-    /// Unacknowledged packets in flight (tcpi_unacked)
+    /// Unacknowledged packets in flight (`tcpi_unacked`)
     /// Data sent but not yet acknowledged
     /// High: Many outstanding packets (either normal or retransmissions)
     /// Low/Zero: No in-flight data
     /// Kernel: 3.10+ (RHEL 7+)
     pub unacked: u32,
 
-    /// Lost packets estimate (tcpi_lost)
+    /// Lost packets estimate (`tcpi_lost`)
     /// Current estimate of packets still unrecovered
     /// High: Significant packet loss
     /// Zero: No known loss
     /// Kernel: 3.10+ (RHEL 7+)
     pub lost: u32,
 
-    /// Currently retransmitted segments (tcpi_retrans)
+    /// Currently retransmitted segments (`tcpi_retrans`)
     /// Segments being retransmitted right now
     /// High: Active loss recovery
     /// Zero: No retransmissions
     /// Kernel: 3.10+ (RHEL 7+)
     pub retrans: u32,
 
-    /// Total retransmissions since connection start (tcpi_total_retrans)
+    /// Total retransmissions since connection start (`tcpi_total_retrans`)
     /// Cumulative count (never decreases)
     /// Delta between samples: retransmissions in that window
     /// High delta: Packet loss detected
@@ -511,22 +511,22 @@ pub struct TcpHealthSample {
     pub total_retrans: u32,
 
     // === BYTE COUNTERS (kernel 5.5+) ===
-    /// Total bytes sent (tcpi_bytes_sent)
+    /// Total bytes sent (`tcpi_bytes_sent`)
     /// Cumulative since connection start
     /// 0 if unavailable (kernel < 5.5)
     /// Delta: bytes sent in sample window
     /// Kernel: 5.5+ (RHEL 9)
     pub bytes_sent: u64,
 
-    /// Total bytes retransmitted (tcpi_bytes_retrans)
+    /// Total bytes retransmitted (`tcpi_bytes_retrans`)
     /// Cumulative since connection start
     /// 0 if unavailable (kernel < 5.5)
     /// Delta: retransmitted bytes in window
-    /// Used for loss_rate calculation: bytes_retrans / bytes_sent
+    /// Used for `loss_rate` calculation: `bytes_retrans` / `bytes_sent`
     /// Kernel: 5.5+ (RHEL 9)
     pub bytes_retrans: u64,
 
-    /// Total bytes acknowledged (tcpi_bytes_acked)
+    /// Total bytes acknowledged (`tcpi_bytes_acked`)
     /// Cumulative since connection start
     /// 0 if unavailable (kernel < 5.5)
     /// Delta: 0 indicates no forward progress (stale/half-open)
@@ -534,14 +534,14 @@ pub struct TcpHealthSample {
     pub bytes_acked: u64,
 
     // === BOTTLENECK DETECTION ===
-    /// Microseconds connection was "busy" (tcpi_busy_time)
+    /// Microseconds connection was "busy" (`tcpi_busy_time`)
     /// Time with data in flight (unacked > 0)
     /// Used as denominator for bottleneck percentages
     /// 0 if unavailable (kernel < 4.9)
     /// Kernel: 4.9+ (RHEL 8+)
     pub busy_time_us: u64,
 
-    /// Microseconds limited by receiver window (tcpi_rwnd_limited)
+    /// Microseconds limited by receiver window (`tcpi_rwnd_limited`)
     /// Time when sender wanted to send but receiver window was full
     /// High: Receiver is bottleneck (can't process data)
     /// Low/Zero: Receiver keeping up
@@ -549,7 +549,7 @@ pub struct TcpHealthSample {
     /// Kernel: 4.9+ (RHEL 8+)
     pub rwnd_limited_us: u64,
 
-    /// Microseconds limited by send buffer (tcpi_sndbuf_limited)
+    /// Microseconds limited by send buffer (`tcpi_sndbuf_limited`)
     /// Time when TCP wanted to send but send buffer was empty
     /// High: Application is bottleneck (not writing)
     /// Low/Zero: Application feeding data normally
@@ -558,27 +558,27 @@ pub struct TcpHealthSample {
     pub sndbuf_limited_us: u64,
 
     // === DELIVERY RATE ===
-    /// Current delivery rate in bytes/second (tcpi_delivery_rate)
+    /// Current delivery rate in bytes/second (`tcpi_delivery_rate`)
     /// Kernel's estimate of achieved throughput
     /// 0 if unavailable (kernel < 4.6)
     /// Kernel: 4.6+ (RHEL 8+)
     pub delivery_rate_bps: u64,
 
-    /// Pacing rate in bytes/second (tcpi_pacing_rate)
-    /// Rate at which TCP is sending (may be less than delivery_rate)
+    /// Pacing rate in bytes/second (`tcpi_pacing_rate`)
+    /// Rate at which TCP is sending (may be less than `delivery_rate`)
     /// 0 if unavailable (kernel < 4.6)
     /// Kernel: 4.6+ (RHEL 8+)
     pub pacing_rate_bps: u64,
 
     // === ADDITIONAL TIMING ===
-    /// Retransmission timeout in milliseconds (tcpi_rto / 1000)
+    /// Retransmission timeout in milliseconds (`tcpi_rto` / 1000)
     /// How long TCP waits before retransmitting unacknowledged data
     /// High: TCP expects packet loss (inflated by jitter/history)
     /// Low: Confident network is reliable
     /// Kernel: 3.10+ (RHEL 7+)
     pub rto_ms: u32,
 
-    /// Zero-window probes sent (tcpi_probes)
+    /// Zero-window probes sent (`tcpi_probes`)
     /// Number of probes sent when receiver window is 0
     /// High: Receiver completely stalled
     /// Zero: Receiver has capacity
@@ -590,10 +590,10 @@ impl TcpHealthSample {
     /// Create minimal sample with only queue sizes (for simple/testing use)
     ///
     /// === USAGE ===
-    /// When you only have queue data, not full TCP_INFO.
+    /// When you only have queue data, not full `TCP_INFO`.
     /// All TCP metrics will be zero/defaults.
     ///
-    /// For production use with real connections, use from_tcp_info() instead.
+    /// For production use with real connections, use `from_tcp_info()` instead.
     #[must_use]
     pub fn with_queues(send_queue_bytes: u32, recv_queue_bytes: u32) -> Self {
         Self {
@@ -647,16 +647,16 @@ impl TcpHealthSample {
         self.timestamp.elapsed()
     }
 
-    /// Create TcpHealthSample from raw TCP_INFO data and queue sizes
+    /// Create `TcpHealthSample` from raw `TCP_INFO` data and queue sizes
     ///
     /// === PURPOSE ===
-    /// Converts netlink query results into TcpHealthSample for storage.
+    /// Converts netlink query results into `TcpHealthSample` for storage.
     ///
     /// === PARAMETERS ===
-    /// - tcp_info: Raw TCP_INFO from netlink inet_diag query
-    /// - send_queue_bytes: From InetDiagMsg.idiag_wqueue
-    /// - recv_queue_bytes: From InetDiagMsg.idiag_rqueue
-    /// - tcp_state: From InetDiagMsg.idiag_state
+    /// - `tcp_info`: Raw `TCP_INFO` from netlink `inet_diag` query
+    /// - `send_queue_bytes`: From `InetDiagMsg.idiag_wqueue`
+    /// - `recv_queue_bytes`: From `InetDiagMsg.idiag_rqueue`
+    /// - `tcp_state`: From `InetDiagMsg.idiag_state`
     ///
     /// === KERNEL VERSION HANDLING ===
     /// Extended fields default to 0 if not available:
@@ -735,15 +735,15 @@ impl TcpHealthSample {
         }
     }
 
-    /// Create TcpHealthSample from TcpConnectionData (RECOMMENDED for netlink)
+    /// Create `TcpHealthSample` from `TcpConnectionData` (RECOMMENDED for netlink)
     ///
     /// === WHAT THIS DOES ===
-    /// Convenience wrapper around from_tcp_info() that accepts TcpConnectionData directly.
+    /// Convenience wrapper around `from_tcp_info()` that accepts `TcpConnectionData` directly.
     /// Avoids manual field extraction from netlink query results.
     ///
     /// === BENEFITS ===
     /// 1. Cleaner code (one function call instead of unpacking fields)
-    /// 2. Single source of truth (TcpConnectionData has all data)
+    /// 2. Single source of truth (`TcpConnectionData` has all data)
     /// 3. Type-safe (can't forget queue sizes or state)
     ///
     /// Linux only - requires netlink feature
@@ -808,13 +808,13 @@ pub struct TrendMetrics {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loss_detected: Option<HealthFlag>,
 
-    /// Loss rate percentage (bytes_retrans / bytes_sent)
+    /// Loss rate percentage (`bytes_retrans` / `bytes_sent`)
     /// Only calculated with kernel 5.5+ (RHEL 9+) byte counters
     #[serde(skip_serializing_if = "Option::is_none")]
     pub loss_rate_pct: OptionalHealthMetric<f64>,
 
     // === RTT AND JITTER ===
-    /// RTT drift: current / min_rtt baseline (requires kernel 4.6+)
+    /// RTT drift: current / `min_rtt` baseline (requires kernel 4.6+)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub rtt_drift: OptionalHealthMetric<f64>,
 
@@ -965,7 +965,7 @@ impl ConnectionHistory {
     /// - With 10 samples, that's 10 operations per add
     ///
     /// OPTIMIZED approach (O(1) - fast):
-    /// - Maintain running totals (sum, sum_of_squares)
+    /// - Maintain running totals (sum, `sum_of_squares`)
     /// - Add: add new value to totals
     /// - Remove: subtract old value from totals
     /// - Calculate average/variance from totals (no loop!)
@@ -1023,7 +1023,7 @@ impl ConnectionHistory {
     ///
     /// === WHY O(1)? ===
     /// - Average: sum / count (constant time)
-    /// - Variance: uses sum and sum_of_squares (constant time)
+    /// - Variance: uses sum and `sum_of_squares` (constant time)
     /// - Velocity: first and last sample only (constant time)
     /// - Acceleration: cached previous velocity (constant time)
     fn update_trend_metrics_incremental(&mut self) {
@@ -1186,7 +1186,7 @@ impl ConnectionHistory {
     ///
     /// === WHAT THIS DOES ===
     /// Computes all TCP health metrics (stale, half-open, loss, RTT, bottleneck, congestion)
-    /// from the VecDeque samples using O(1) operations.
+    /// from the `VecDeque` samples using O(1) operations.
     ///
     /// === OPTIMIZATION ===
     /// Uses sliding window (latest 1-2 samples) instead of maintaining separate state.
@@ -1227,8 +1227,8 @@ impl ConnectionHistory {
     ///
     /// === STRATEGY ===
     /// Two independent checks:
-    /// 1. Send-side: Are we frozen? (last_data_sent_ms high)
-    /// 2. Recv-side: Is peer frozen? (last_ack_recv_ms high)
+    /// 1. Send-side: Are we frozen? (`last_data_sent_ms` high)
+    /// 2. Recv-side: Is peer frozen? (`last_ack_recv_ms` high)
     ///
     /// Two thresholds each:
     /// 1. Suspect (1.5s): Early warning, may be normal idle
@@ -1466,11 +1466,11 @@ impl ConnectionHistory {
     ///
     /// === WHAT THIS IDENTIFIES ===
     /// WHERE is the bottleneck:
-    /// - High rwnd_limited: Receiver too slow (receiver bottleneck)
-    /// - High sndbuf_limited: Application too slow (sender bottleneck)
+    /// - High `rwnd_limited`: Receiver too slow (receiver bottleneck)
+    /// - High `sndbuf_limited`: Application too slow (sender bottleneck)
     /// - Neither high: Network is bottleneck (congestion, limited BW)
     ///
-    /// Requires kernel 4.9+ (RHEL 8+) for busy_time, rwnd_limited, sndbuf_limited
+    /// Requires kernel 4.9+ (RHEL 8+) for `busy_time`, `rwnd_limited`, `sndbuf_limited`
     fn calculate_bottleneck_metrics(&mut self, prev: &TcpHealthSample, current: &TcpHealthSample) {
         if current.busy_time_us > 0 && prev.busy_time_us > 0 {
             let delta_busy = current.busy_time_us.saturating_sub(prev.busy_time_us);
@@ -1553,11 +1553,7 @@ impl ConnectionHistory {
             },
         ));
 
-        if congestion_confirmed {
-            self.was_congested = true;
-        } else {
-            self.was_congested = false;
-        }
+        self.was_congested = congestion_confirmed;
 
         // === RECOVERING ===
         if self.was_congested && cwnd_increased && delta_retrans == 0 {
@@ -1621,7 +1617,7 @@ impl ConnectionHistory {
 /// Manager for all connection histories
 #[derive(Debug)]
 pub struct HistoryManager {
-    /// Map from (local_ip, local_port, remote_ip, remote_port) 4-tuple to ConnectionHistory
+    /// Map from (`local_ip`, `local_port`, `remote_ip`, `remote_port`) 4-tuple to `ConnectionHistory`
     /// 4-tuple allows tracking same remote on different local sockets separately
     connections: HashMap<(String, u16, String, u16), ConnectionHistory>,
 
@@ -1641,8 +1637,8 @@ impl HistoryManager {
     /// Add sample with only queue sizes (legacy method)
     ///
     /// === WHEN TO USE ===
-    /// When you only have queue data, not full TCP_INFO metrics.
-    /// For production, use add_sample_from_netlink() which has full data.
+    /// When you only have queue data, not full `TCP_INFO` metrics.
+    /// For production, use `add_sample_from_netlink()` which has full data.
     pub fn add_sample_with_local(
         &mut self,
         local_ip: &str,
@@ -1669,10 +1665,10 @@ impl HistoryManager {
     /// Add sample with full TCP health data from netlink (RECOMMENDED)
     ///
     /// === WHAT THIS DOES ===
-    /// Creates fully-populated TcpHealthSample with all TCP metrics from netlink query.
+    /// Creates fully-populated `TcpHealthSample` with all TCP metrics from netlink query.
     /// Enables comprehensive health analysis (stale, half-open, loss, bottleneck, etc.).
     ///
-    /// === VERSUS add_sample_with_local ===
+    /// === VERSUS `add_sample_with_local` ===
     /// Old method: Only queue sizes → Health metrics don't work
     /// This method: Queue + RTT + congestion + loss metrics → Full analysis
     ///
