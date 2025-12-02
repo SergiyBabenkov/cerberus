@@ -30,6 +30,7 @@ use std::sync::atomic::{AtomicBool, Ordering as AtomicOrdering};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use threadpool::ThreadPool;
 
+#[allow(unused_imports)]
 use cerberus::{
     ConfigResponse, ConnectionInfo, ConnectionWithHealth, DEFAULT_HTTP_PORT, HistoryManager,
     MonitorRequest, MonitorResponse, assess_connection_health_with_history, extract_remote_parts,
