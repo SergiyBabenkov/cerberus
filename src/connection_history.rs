@@ -926,8 +926,8 @@ pub struct ConnectionHistory {
     prev_velocity_time: Option<Instant>,
 
     // === HEALTH METRIC STATE ===
-    prev_cwnd: Option<u32>,        // For congestion recovery detection
-    was_congested: bool,           // For recovery detection tracking
+    prev_cwnd: Option<u32>, // For congestion recovery detection
+    was_congested: bool,    // For recovery detection tracking
 }
 
 impl ConnectionHistory {
@@ -1261,7 +1261,10 @@ impl ConnectionHistory {
                     current.last_data_sent_ms, STALE_CONFIRMED_SEND_MS
                 )
             } else {
-                format!("Send-side OK ({}ms since last data)", current.last_data_sent_ms)
+                format!(
+                    "Send-side OK ({}ms since last data)",
+                    current.last_data_sent_ms
+                )
             },
         ));
 
@@ -1292,7 +1295,10 @@ impl ConnectionHistory {
                     current.last_ack_recv_ms, STALE_CONFIRMED_RECV_MS
                 )
             } else {
-                format!("Recv-side OK ({}ms since last ACK)", current.last_ack_recv_ms)
+                format!(
+                    "Recv-side OK ({}ms since last ACK)",
+                    current.last_ack_recv_ms
+                )
             },
         ));
     }
@@ -1453,9 +1459,7 @@ impl ConnectionHistory {
 
             self.trend_metrics.rto_inflation = Some(HealthMetric::new(
                 rto_ratio,
-                format!(
-                    "RTO {rto_ratio:.1}x RTT ({rto_ms:.0}ms vs {rtt_ms:.1}ms)",
-                ),
+                format!("RTO {rto_ratio:.1}x RTT ({rto_ms:.0}ms vs {rtt_ms:.1}ms)",),
             ));
         } else {
             self.trend_metrics.rto_inflation = None;
@@ -1562,10 +1566,8 @@ impl ConnectionHistory {
                 "Congestion recovering: cwnd growing, no retrans".to_string(),
             ));
         } else if self.was_congested {
-            self.trend_metrics.congestion_recovering = Some(HealthFlag::new(
-                false,
-                "Still congested".to_string(),
-            ));
+            self.trend_metrics.congestion_recovering =
+                Some(HealthFlag::new(false, "Still congested".to_string()));
         } else {
             self.trend_metrics.congestion_recovering = None;
         }
