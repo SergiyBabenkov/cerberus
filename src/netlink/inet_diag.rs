@@ -110,14 +110,14 @@ pub enum InetDiagError {
 impl std::fmt::Display for InetDiagError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            InetDiagError::Socket(e) => write!(f, "Socket error: {}", e),
-            InetDiagError::Message(e) => write!(f, "Message error: {}", e),
-            InetDiagError::TcpInfo(e) => write!(f, "TcpInfo error: {}", e),
+            InetDiagError::Socket(e) => write!(f, "Socket error: {e}"),
+            InetDiagError::Message(e) => write!(f, "Message error: {e}"),
+            InetDiagError::TcpInfo(e) => write!(f, "TcpInfo error: {e}"),
             InetDiagError::NotFound => write!(f, "Connection not found"),
             InetDiagError::PermissionDenied => {
                 write!(f, "Permission denied (need root/CAP_NET_ADMIN)")
             }
-            InetDiagError::Other(msg) => write!(f, "{}", msg),
+            InetDiagError::Other(msg) => write!(f, "{msg}"),
         }
     }
 }
@@ -650,11 +650,11 @@ pub fn query_tcp_connection(
     // Convert string IP addresses to Ipv4Addr structures.
     // This validates the IP format and converts to binary representation.
     let local_addr: Ipv4Addr = local_ip.parse().map_err(|e| {
-        InetDiagError::Other(format!("Invalid local IP address '{}': {}", local_ip, e))
+        InetDiagError::Other(format!("Invalid local IP address '{local_ip}': {e}"))
     })?;
 
     let remote_addr: Ipv4Addr = remote_ip.parse().map_err(|e| {
-        InetDiagError::Other(format!("Invalid remote IP address '{}': {}", remote_ip, e))
+        InetDiagError::Other(format!("Invalid remote IP address '{remote_ip}': {e}"))
     })?;
 
     // === STEP 2: Create Netlink socket ===
@@ -754,8 +754,7 @@ pub fn query_tcp_connection(
                     0 => {}                                            // ACK, not an error
                     _ => {
                         return Err(InetDiagError::Other(format!(
-                            "Kernel returned error: errno {}",
-                            errno
+                            "Kernel returned error: errno {errno}"
                         )));
                     }
                 }
@@ -834,7 +833,7 @@ pub fn query_tcp_connections_batch(
     let (local_ip, local_port, _, _) = &connections[0];
 
     let local_addr: Ipv4Addr = local_ip.parse().map_err(|e| {
-        InetDiagError::Other(format!("Invalid local IP address '{}': {}", local_ip, e))
+        InetDiagError::Other(format!("Invalid local IP address '{local_ip}': {e}"))
     })?;
 
     // === Create socket ===
@@ -910,8 +909,7 @@ pub fn query_tcp_connections_batch(
                     0 => {} // ACK
                     _ => {
                         return Err(InetDiagError::Other(format!(
-                            "Kernel returned error: errno {}",
-                            errno
+                            "Kernel returned error: errno {errno}"
                         )));
                     }
                 }

@@ -91,7 +91,7 @@ impl SocketError {
 
     fn from_io_error(context: &str, err: io::Error) -> Self {
         Self {
-            message: format!("{}: {}", context, err),
+            message: format!("{context}: {err}"),
             kind: err.kind(),
         }
     }

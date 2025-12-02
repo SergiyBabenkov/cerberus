@@ -1198,7 +1198,7 @@ pub fn get_tcp_metrics_via_netlink(
     use crate::netlink::{query_tcp_connection, tcp_info_to_metrics};
 
     let conn_data = query_tcp_connection(local_ip, local_port, remote_ip, remote_port)
-        .map_err(|e| format!("{}", e))?;
+        .map_err(|e| format!("{e}"))?;
 
     // Convert tcp_info to TcpMetrics (old format)
     Ok(tcp_info_to_metrics(&conn_data.tcp_info))
@@ -1259,7 +1259,7 @@ pub fn get_tcp_connection_data_via_netlink(
 ) -> Result<crate::netlink::TcpConnectionData, String> {
     use crate::netlink::query_tcp_connection;
 
-    query_tcp_connection(local_ip, local_port, remote_ip, remote_port).map_err(|e| format!("{}", e))
+    query_tcp_connection(local_ip, local_port, remote_ip, remote_port).map_err(|e| format!("{e}"))
 }
 
 /// Get TCP metrics for multiple connections via Netlink (RECOMMENDED)
@@ -1988,7 +1988,7 @@ pub fn assess_connection_health_v2(
             && bytes_retrans > 0
             && let Some(rate) = conn_data.retransmission_rate()
         {
-            reasons.push(format!("Retransmit rate: {:.2}%", rate));
+            reasons.push(format!("Retransmit rate: {rate:.2}%"));
         }
     }
 
@@ -2033,8 +2033,7 @@ pub fn assess_connection_health_v2(
     if ssthresh < cwnd && ssthresh < 10 {
         score += 2;
         reasons.push(format!(
-            "Low ssthresh ({}) indicates past congestion",
-            ssthresh
+            "Low ssthresh ({ssthresh}) indicates past congestion"
         ));
     }
 

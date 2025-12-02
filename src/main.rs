@@ -605,7 +605,7 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                                     // === BUILD REMOTE ADDRESS STRING ===
                                     // v2 API expects remote_addr in "IP:port" format
                                     // We already have remote_ip and remote_port from earlier parsing
-                                    let remote_addr = format!("{}:{}", remote_ip, remote_port);
+                                    let remote_addr = format!("{remote_ip}:{remote_port}");
 
                                     // === ASSESS CONNECTION HEALTH (V2 API) ===
                                     // NEW: Direct assessment using TcpConnectionData
@@ -1149,7 +1149,7 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                                             let (tcp_metrics, health) = {
                                                 // Build remote address for v2 API
                                                 let remote_addr =
-                                                    format!("{}:{}", remote_ip, remote_port);
+                                                    format!("{remote_ip}:{remote_port}");
 
                                                 // Assess health using v2 API if we have connection data
                                                 // NEW: Direct assessment without TcpMetrics conversion
