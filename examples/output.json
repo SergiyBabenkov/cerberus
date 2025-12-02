@@ -1,0 +1,1552 @@
+{
+  "timestamp": 1764639859532,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 353430,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 47.317,
+    "rtt_var_ms": 1.315,
+    "bytes_sent": 234803646,
+    "bytes_retrans": 83160,
+    "congestion_window": 48,
+    "unacked_packets": 48,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1335581,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 113944000,
+    "total_retrans": 60,
+    "snd_ssthresh": 37,
+    "last_data_sent_ms": 18,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 17,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": -113.72651838783595,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -21.381515156719193,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 76316.1353361135,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 391776.0,
+      "send_queue_ma_long": 442688.4,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": false,
+      "queue_shrinking": true,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (18ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (18ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (18ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (18ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 18ms ago, 48 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": true,
+        "explanation": "CRITICAL: 23 packet retransmission(s) detected in window. For ~1KB messages, this adds RTT delay and indicates connection issues."
+      },
+      "loss_rate_pct": {
+        "value": 0.032536426651577306,
+        "explanation": "Loss rate 0.03% (31878 bytes lost of 97976340 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1375646111311455,
+        "explanation": "RTT drift 1.1x baseline (47.32ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.027791280089608385,
+        "explanation": "Jitter 0.03 (1.31ms variance / 47.32ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": true,
+        "explanation": "Congestion suspected (early warning): cwnd decreased from 94 to 48 segments, 23 retransmissions in window. Watch connection closely."
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 48 >= ssthresh 37)"
+      },
+      "rto_inflation": {
+        "value": 5.241245218420441,
+        "explanation": "RTO INFLATED: 5.2x RTT (248ms RTO vs 47.32ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+
+{
+  "timestamp": 1764639860637,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 458766,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 47.312,
+    "rtt_var_ms": 1.996,
+    "bytes_sent": 236604060,
+    "bytes_retrans": 83160,
+    "congestion_window": 60,
+    "unacked_packets": 60,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1798754,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 115049000,
+    "total_retrans": 60,
+    "snd_ssthresh": 37,
+    "last_data_sent_ms": 10,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 23,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue growing trend detected; Queue already elevated + growing; Queue persistently high for 10 consecutive samples; Queue accelerating (1307 bytes/sec²)",
+    "trend_metrics": {
+      "send_queue_velocity": 1330.7119568351159,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": 1307.4084834868002,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 71419.22303581852,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 421806.0,
+      "send_queue_ma_long": 452390.4,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": true,
+      "queue_shrinking": false,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (10ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (11ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (10ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (11ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 11ms ago, 60 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": false,
+        "explanation": "No packet loss detected in sample window (0 retransmissions)"
+      },
+      "loss_rate_pct": {
+        "value": 0.0,
+        "explanation": "Loss rate 0.00% (0 bytes lost of 1800414 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1374444043755259,
+        "explanation": "RTT drift 1.1x baseline (47.31ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.042188028407169426,
+        "explanation": "Jitter 0.04 (2.00ms variance / 47.31ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": false,
+        "explanation": "No congestion signals (cwnd: 60 segments, 0 retrans in window)"
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 60 >= ssthresh 37)"
+      },
+      "rto_inflation": {
+        "value": 5.24179912073047,
+        "explanation": "RTO INFLATED: 5.2x RTT (248ms RTO vs 47.31ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639861743,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 612612,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 48.186,
+    "rtt_var_ms": 1.8,
+    "bytes_sent": 238591584,
+    "bytes_retrans": 84546,
+    "congestion_window": 53,
+    "unacked_packets": 53,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1553220,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 116154000,
+    "total_retrans": 61,
+    "snd_ssthresh": 48,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 23,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue growing trend detected; Queue already elevated + growing; Queue persistently high for 10 consecutive samples; Queue accelerating (967 bytes/sec²)",
+    "trend_metrics": {
+      "send_queue_velocity": 2400.479290592875,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": 967.495327955306,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 82158.8253606393,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 474936.0,
+      "send_queue_ma_long": 474843.6,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": true,
+      "queue_shrinking": false,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (0ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (1ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (0ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (1ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 1ms ago, 53 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": true,
+        "explanation": "CRITICAL: 1 packet retransmission(s) detected in window. For ~1KB messages, this adds RTT delay and indicates connection issues."
+      },
+      "loss_rate_pct": {
+        "value": 0.0697350069735007,
+        "explanation": "Loss rate 0.07% (1386 bytes lost of 1987524 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1584565452578435,
+        "explanation": "RTT drift 1.2x baseline (48.19ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.03735524841240194,
+        "explanation": "Jitter 0.04 (1.80ms variance / 48.19ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": true,
+        "explanation": "Congestion suspected (early warning): cwnd decreased from 60 to 53 segments, 1 retransmissions in window. Watch connection closely."
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 53 >= ssthresh 48)"
+      },
+      "rto_inflation": {
+        "value": 5.167476030382269,
+        "explanation": "RTO INFLATED: 5.2x RTT (249ms RTO vs 48.19ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639862847,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 444906,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 45.945,
+    "rtt_var_ms": 0.737,
+    "bytes_sent": 240531984,
+    "bytes_retrans": 84546,
+    "congestion_window": 64,
+    "unacked_packets": 63,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1868764,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 117259000,
+    "total_retrans": 61,
+    "snd_ssthresh": 48,
+    "last_data_sent_ms": 2,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 17,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": -2296.1483117068997,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -4252.267144252969,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 82541.04205521033,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 505428.0,
+      "send_queue_ma_long": 470824.2,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": false,
+      "queue_shrinking": true,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (2ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (2ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (2ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (2ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 2ms ago, 63 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": false,
+        "explanation": "No packet loss detected in sample window (0 retransmissions)"
+      },
+      "loss_rate_pct": {
+        "value": 0.0,
+        "explanation": "Loss rate 0.00% (0 bytes lost of 1940400 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1045798773891093,
+        "explanation": "RTT drift 1.1x baseline (45.95ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.016040918489498315,
+        "explanation": "Jitter 0.02 (0.74ms variance / 45.95ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": false,
+        "explanation": "No congestion signals (cwnd: 64 segments, 0 retrans in window)"
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 64 >= ssthresh 48)"
+      },
+      "rto_inflation": {
+        "value": 5.3542278811622595,
+        "explanation": "RTO INFLATED: 5.4x RTT (246ms RTO vs 45.95ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639863953,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 374220,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 48.376,
+    "rtt_var_ms": 2.559,
+    "bytes_sent": 242572176,
+    "bytes_retrans": 84546,
+    "congestion_window": 74,
+    "unacked_packets": 74,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 2220769,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 118364000,
+    "total_retrans": 61,
+    "snd_ssthresh": 48,
+    "last_data_sent_ms": 6,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 17,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.03%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": -3365.9439673395163,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -967.8507811153114,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 80327.75811735328,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 477246.0,
+      "send_queue_ma_long": 451558.8,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": false,
+      "queue_shrinking": true,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (6ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (6ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (6ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (6ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 6ms ago, 74 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": false,
+        "explanation": "No packet loss detected in sample window (0 retransmissions)"
+      },
+      "loss_rate_pct": {
+        "value": 0.0,
+        "explanation": "Loss rate 0.00% (0 bytes lost of 2040192 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.163024401971391,
+        "explanation": "RTT drift 1.2x baseline (48.38ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.05289813130477923,
+        "explanation": "Jitter 0.05 (2.56ms variance / 48.38ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": false,
+        "explanation": "No congestion signals (cwnd: 74 segments, 0 retrans in window)"
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 74 >= ssthresh 48)"
+      },
+      "rto_inflation": {
+        "value": 5.1471804200429965,
+        "explanation": "RTO INFLATED: 5.1x RTT (249ms RTO vs 48.38ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639865058,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 580734,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 45.697,
+    "rtt_var_ms": 0.539,
+    "bytes_sent": 244570788,
+    "bytes_retrans": 85932,
+    "congestion_window": 66,
+    "unacked_packets": 66,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1946671,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 119470000,
+    "total_retrans": 62,
+    "snd_ssthresh": 53,
+    "last_data_sent_ms": 13,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 23,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue growing trend detected; Queue already elevated + growing; Queue persistently high for 10 consecutive samples; Queue accelerating (4390 bytes/sec²)",
+    "trend_metrics": {
+      "send_queue_velocity": 1487.260772072117,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": 4390.205688101533,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 84167.52466931658,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 466620.0,
+      "send_queue_ma_long": 454330.8,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": true,
+      "queue_shrinking": false,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (13ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (13ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (13ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (13ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 13ms ago, 66 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": true,
+        "explanation": "CRITICAL: 1 packet retransmission(s) detected in window. For ~1KB messages, this adds RTT delay and indicates connection issues."
+      },
+      "loss_rate_pct": {
+        "value": 0.06934812760055478,
+        "explanation": "Loss rate 0.07% (1386 bytes lost of 1998612 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.0986176223103739,
+        "explanation": "RTT drift 1.1x baseline (45.70ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.011795085016521873,
+        "explanation": "Jitter 0.01 (0.54ms variance / 45.70ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": true,
+        "explanation": "Congestion suspected (early warning): cwnd decreased from 74 to 66 segments, 1 retransmissions in window. Watch connection closely."
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 66 >= ssthresh 53)"
+      },
+      "rto_inflation": {
+        "value": 5.383285554850428,
+        "explanation": "RTO INFLATED: 5.4x RTT (246ms RTO vs 45.70ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639866164,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 425502,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 45.702,
+    "rtt_var_ms": 1.132,
+    "bytes_sent": 246191022,
+    "bytes_retrans": 88704,
+    "congestion_window": 40,
+    "unacked_packets": 40,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1183551,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 120575000,
+    "total_retrans": 64,
+    "snd_ssthresh": 38,
+    "last_data_sent_ms": 14,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 21,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue growing trend detected; Queue already elevated + growing; Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": 574.0290936101145,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -826.1522848810963,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 82972.79478696626,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 460152.0,
+      "send_queue_ma_long": 446707.8,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": true,
+      "queue_shrinking": false,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (14ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (15ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (14ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (15ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 15ms ago, 40 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": true,
+        "explanation": "CRITICAL: 2 packet retransmission(s) detected in window. For ~1KB messages, this adds RTT delay and indicates connection issues."
+      },
+      "loss_rate_pct": {
+        "value": 0.1710863986313088,
+        "explanation": "Loss rate 0.17% (2772 bytes lost of 1620234 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.0987378290659935,
+        "explanation": "RTT drift 1.1x baseline (45.70ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.024769156710866044,
+        "explanation": "Jitter 0.02 (1.13ms variance / 45.70ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": true,
+        "explanation": "Congestion suspected (early warning): cwnd decreased from 66 to 40 segments, 2 retransmissions in window. Watch connection closely."
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 40 >= ssthresh 38)"
+      },
+      "rto_inflation": {
+        "value": 5.382696599711172,
+        "explanation": "RTO INFLATED: 5.4x RTT (246ms RTO vs 45.70ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639867269,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 507276,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 46.535,
+    "rtt_var_ms": 0.579,
+    "bytes_sent": 247687902,
+    "bytes_retrans": 88704,
+    "congestion_window": 51,
+    "unacked_packets": 51,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1494292,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 121681000,
+    "total_retrans": 64,
+    "snd_ssthresh": 38,
+    "last_data_sent_ms": 16,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 19,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue persistently high for 10 consecutive samples; Queue accelerating (1841 bytes/sec²)",
+    "trend_metrics": {
+      "send_queue_velocity": 2609.177996025004,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": 1840.8081698952897,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 82813.23903724567,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 504504.0,
+      "send_queue_ma_long": 457934.4,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": false,
+      "queue_shrinking": true,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (16ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (16ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (16ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (16ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 16ms ago, 51 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": false,
+        "explanation": "No packet loss detected in sample window (0 retransmissions)"
+      },
+      "loss_rate_pct": {
+        "value": 0.0,
+        "explanation": "Loss rate 0.00% (0 bytes lost of 1496880 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.11876427455223,
+        "explanation": "RTT drift 1.1x baseline (46.53ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.012442247770495326,
+        "explanation": "Jitter 0.01 (0.58ms variance / 46.53ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": false,
+        "explanation": "No congestion signals (cwnd: 51 segments, 0 retrans in window)"
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 51 >= ssthresh 38)"
+      },
+      "rto_inflation": {
+        "value": 5.30783281401096,
+        "explanation": "RTO INFLATED: 5.3x RTT (247ms RTO vs 46.53ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639868375,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 557172,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 47.059,
+    "rtt_var_ms": 2.178,
+    "bytes_sent": 249391296,
+    "bytes_retrans": 90090,
+    "congestion_window": 47,
+    "unacked_packets": 46,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1361195,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 122786000,
+    "total_retrans": 65,
+    "snd_ssthresh": 42,
+    "last_data_sent_ms": 5,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 21,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue growing trend detected; Queue already elevated + growing; Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": 1956.8791012022534,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -590.032016615893,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 81797.48815214315,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 496650.0,
+      "send_queue_ma_long": 476784.0,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": true,
+      "queue_shrinking": false,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (5ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (6ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (5ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (6ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 6ms ago, 46 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": true,
+        "explanation": "CRITICAL: 1 packet retransmission(s) detected in window. For ~1KB messages, this adds RTT delay and indicates connection issues."
+      },
+      "loss_rate_pct": {
+        "value": 0.08136696501220504,
+        "explanation": "Loss rate 0.08% (1386 bytes lost of 1703394 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1313619425411707,
+        "explanation": "RTT drift 1.1x baseline (47.06ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.04628232644127585,
+        "explanation": "Jitter 0.05 (2.18ms variance / 47.06ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": true,
+        "explanation": "Congestion suspected (early warning): cwnd decreased from 51 to 47 segments, 1 retransmissions in window. Watch connection closely."
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 47 >= ssthresh 42)"
+      },
+      "rto_inflation": {
+        "value": 5.269980237574109,
+        "explanation": "RTO INFLATED: 5.3x RTT (248ms RTO vs 47.06ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639869481,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 421344,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 47.778,
+    "rtt_var_ms": 0.881,
+    "bytes_sent": 251105778,
+    "bytes_retrans": 90090,
+    "congestion_window": 57,
+    "unacked_packets": 57,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1628637,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 123893000,
+    "total_retrans": 65,
+    "snd_ssthresh": 42,
+    "last_data_sent_ms": 5,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 19,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue persistently high for 10 consecutive samples; Queue accelerating (4401 bytes/sec²)",
+    "trend_metrics": {
+      "send_queue_velocity": 6826.397981293255,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": 4401.181104942065,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 83261.69332147889,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 495264.0,
+      "send_queue_ma_long": 473596.2,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": false,
+      "queue_shrinking": true,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (5ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (6ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (5ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (6ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 6ms ago, 57 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": false,
+        "explanation": "No packet loss detected in sample window (0 retransmissions)"
+      },
+      "loss_rate_pct": {
+        "value": 0.0,
+        "explanation": "Loss rate 0.00% (0 bytes lost of 1714482 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1486476739992788,
+        "explanation": "RTT drift 1.1x baseline (47.78ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.01843944911884131,
+        "explanation": "Jitter 0.02 (0.88ms variance / 47.78ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": false,
+        "explanation": "No congestion signals (cwnd: 57 segments, 0 retrans in window)"
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 57 >= ssthresh 42)"
+      },
+      "rto_inflation": {
+        "value": 5.190673531751015,
+        "explanation": "RTO INFLATED: 5.2x RTT (248ms RTO vs 47.78ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639870586,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 485100,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 46.911,
+    "rtt_var_ms": 0.878,
+    "bytes_sent": 253144584,
+    "bytes_retrans": 90090,
+    "congestion_window": 69,
+    "unacked_packets": 68,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 2026530,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 124998000,
+    "total_retrans": 65,
+    "snd_ssthresh": 42,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 17,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": 2368.2716394584263,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -4034.1142267347145,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 73006.81818570102,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 486948.0,
+      "send_queue_ma_long": 486486.0,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": false,
+      "queue_shrinking": true,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (0ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (0ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (0ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (0ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 0ms ago, 68 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": false,
+        "explanation": "No packet loss detected in sample window (0 retransmissions)"
+      },
+      "loss_rate_pct": {
+        "value": 0.0,
+        "explanation": "Loss rate 0.00% (0 bytes lost of 2038806 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1278038225748288,
+        "explanation": "RTT drift 1.1x baseline (46.91ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.018716292553985207,
+        "explanation": "Jitter 0.02 (0.88ms variance / 46.91ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": false,
+        "explanation": "No congestion signals (cwnd: 69 segments, 0 retrans in window)"
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 69 >= ssthresh 42)"
+      },
+      "rto_inflation": {
+        "value": 5.265289590927501,
+        "explanation": "RTO INFLATED: 5.3x RTT (247ms RTO vs 46.91ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639871691,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 525294,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 45.947,
+    "rtt_var_ms": 0.856,
+    "bytes_sent": 255241602,
+    "bytes_retrans": 91476,
+    "congestion_window": 61,
+    "unacked_packets": 60,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1738762,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 126103000,
+    "total_retrans": 66,
+    "snd_ssthresh": 52,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 21,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue growing trend detected; Queue already elevated + growing; Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": -8777.042073488781,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -10085.029693176515,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 73208.61971216243,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 476322.0,
+      "send_queue_ma_long": 493138.8,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": true,
+      "queue_shrinking": false,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (0ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (0ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (0ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (0ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 0ms ago, 60 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": true,
+        "explanation": "CRITICAL: 1 packet retransmission(s) detected in window. For ~1KB messages, this adds RTT delay and indicates connection issues."
+      },
+      "loss_rate_pct": {
+        "value": 0.06609385327164573,
+        "explanation": "Loss rate 0.07% (1386 bytes lost of 2097018 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.104627960091357,
+        "explanation": "RTT drift 1.1x baseline (45.95ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.01863016083748667,
+        "explanation": "Jitter 0.02 (0.86ms variance / 45.95ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": true,
+        "explanation": "Congestion suspected (early warning): cwnd decreased from 69 to 61 segments, 1 retransmissions in window. Watch connection closely."
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 61 >= ssthresh 52)"
+      },
+      "rto_inflation": {
+        "value": 5.3539948201188325,
+        "explanation": "RTO INFLATED: 5.4x RTT (246ms RTO vs 45.95ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639872794,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 335412,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 46.49,
+    "rtt_var_ms": 0.55,
+    "bytes_sent": 257399604,
+    "bytes_retrans": 91476,
+    "congestion_window": 71,
+    "unacked_packets": 70,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1999422,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 127205000,
+    "total_retrans": 66,
+    "snd_ssthresh": 52,
+    "last_data_sent_ms": 10,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 17,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue persistently high for 10 consecutive samples",
+    "trend_metrics": {
+      "send_queue_velocity": -11008.541469153393,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": -2024.3619738799848,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 75176.41513240717,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 447678.0,
+      "send_queue_ma_long": 465418.8,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": false,
+      "queue_shrinking": true,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (10ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (10ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (10ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (10ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 10ms ago, 70 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": false,
+        "explanation": "No packet loss detected in sample window (0 retransmissions)"
+      },
+      "loss_rate_pct": {
+        "value": 0.0,
+        "explanation": "Loss rate 0.00% (0 bytes lost of 2158002 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1176824137516528,
+        "explanation": "RTT drift 1.1x baseline (46.49ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.011830501183050119,
+        "explanation": "Jitter 0.01 (0.55ms variance / 46.49ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": false,
+        "explanation": "No congestion signals (cwnd: 71 segments, 0 retrans in window)"
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 71 >= ssthresh 52)"
+      },
+      "rto_inflation": {
+        "value": 5.3129705312970525,
+        "explanation": "RTO INFLATED: 5.3x RTT (247ms RTO vs 46.49ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}
+{
+  "timestamp": 1764639873898,
+  "found": true,
+  "connection": {
+    "local_address": "192.168.21.201:5201",
+    "remote_address": "192.168.18.100:51555",
+    "state": "ESTABLISHED",
+    "state_code": 1,
+    "send_queue_bytes": 566874,
+    "recv_queue_bytes": 0
+  },
+  "tcp_metrics": {
+    "rtt_ms": 47.59,
+    "rtt_var_ms": 3.081,
+    "bytes_sent": 259694820,
+    "bytes_retrans": 92862,
+    "congestion_window": 59,
+    "unacked_packets": 59,
+    "retrans_events": 0,
+    "min_rtt_ms": 41.595,
+    "delivery_rate_bps": 1678393,
+    "rwnd_limited_us": 55000,
+    "busy_time_us": 128310000,
+    "total_retrans": 67,
+    "snd_ssthresh": 55,
+    "last_data_sent_ms": 7,
+    "pmtu": 1500
+  },
+  "health": {
+    "status": "STALE",
+    "score": 23,
+    "safe_to_send": false,
+    "reasons": "CRITICAL: Send queue >= 4KB (2+ messages stuck); Active retransmissions detected; Retransmit rate: 0.04%; Data queued with unacked packets (stalling); Unacked > 70% of cwnd (congestion); Queue growing trend detected; Queue already elevated + growing; Queue persistently high for 10 consecutive samples; Queue accelerating (27504 bytes/sec²)",
+    "trend_metrics": {
+      "send_queue_velocity": 19370.9726396492,
+      "recv_queue_velocity": 0.0,
+      "send_queue_acceleration": 27503.873736596157,
+      "recv_queue_acceleration": 0.0,
+      "send_queue_variance": 80560.3483497932,
+      "recv_queue_variance": 0.0,
+      "send_queue_ma_short": 475860.0,
+      "send_queue_ma_long": 477615.6,
+      "send_queue_persistent": true,
+      "send_queue_high_count": 10,
+      "queue_growing": true,
+      "queue_shrinking": false,
+      "high_volatility": false,
+      "sample_count": 10,
+      "stale_suspect_send": {
+        "value": false,
+        "explanation": "Send-side active (7ms since last data sent, threshold: 1500ms)"
+      },
+      "stale_suspect_recv": {
+        "value": false,
+        "explanation": "Recv-side active (8ms since last ACK, threshold: 1500ms)"
+      },
+      "stale_confirmed_send": {
+        "value": false,
+        "explanation": "Send-side OK (7ms since last data sent, threshold: 3000ms)"
+      },
+      "stale_confirmed_recv": {
+        "value": false,
+        "explanation": "Recv-side OK (8ms since last ACK, threshold: 3000ms)"
+      },
+      "half_open_suspect": {
+        "value": false,
+        "explanation": "Connection responsive (last ACK: 8ms ago, 59 unacked bytes)"
+      },
+      "half_open_confirmed": {
+        "value": false,
+        "explanation": "Connection not half-open (ACKs being received normally)"
+      },
+      "loss_detected": {
+        "value": true,
+        "explanation": "CRITICAL: 1 packet retransmission(s) detected in window. For ~1KB messages, this adds RTT delay and indicates connection issues."
+      },
+      "loss_rate_pct": {
+        "value": 0.06038647342995169,
+        "explanation": "Loss rate 0.06% (1386 bytes lost of 2295216 sent, threshold: 1.0%)"
+      },
+      "rtt_drift": {
+        "value": 1.1441278999879794,
+        "explanation": "RTT drift 1.1x baseline (47.59ms current vs 41.59ms min, threshold: 3.0x)"
+      },
+      "jitter_index": {
+        "value": 0.06474049169993697,
+        "explanation": "Jitter 0.06 (3.08ms variance / 47.59ms RTT, threshold: 0.35)"
+      },
+      "recv_limited_pct": {
+        "value": 0.0,
+        "explanation": "Receiver OK: 0.0% rwnd-limited (threshold: 40%)"
+      },
+      "sender_limited_pct": {
+        "value": 0.0,
+        "explanation": "Sender OK: 0.0% sndbuf-limited (threshold: 40%)"
+      },
+      "congestion_suspected": {
+        "value": true,
+        "explanation": "Congestion suspected (early warning): cwnd decreased from 71 to 59 segments, 1 retransmissions in window. Watch connection closely."
+      },
+      "congestion_confirmed": {
+        "value": false,
+        "explanation": "Not congested (cwnd 59 >= ssthresh 55)"
+      },
+      "rto_inflation": {
+        "value": 5.211178819079638,
+        "explanation": "RTO INFLATED: 5.2x RTT (248ms RTO vs 47.59ms RTT, threshold: 4.0x). TCP expects packet loss - connection near failure."
+      }
+    }
+  }
+}

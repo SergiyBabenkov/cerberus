@@ -1,0 +1,92 @@
+# ------------------------------------------------------------
+# Rust / Cargo build artifacts
+# ------------------------------------------------------------
+target/
+debug/
+release/
+Cargo.lock        # keep if this is a library; remove ignore for binaries
+**/*.rs.bk        # rustfmt backup files
+
+# ------------------------------------------------------------
+# Rust tooling cache / metadata
+# ------------------------------------------------------------
+*.pdb             # MSVC debug symbols
+*.dSYM/           # macOS debug symbols
+*.gcno
+*.gcda
+*.profraw
+*.profdata
+.rustc_info.json
+rust-toolchain
+
+# Rust analyzer / language servers
+.rust-analyzer
+.lsp/
+
+# Bindgen / cbindgen outputs
+bindings.h
+bindings.rs
+cbindgen.toml
+
+# ------------------------------------------------------------
+# C build artifacts (embedded C modules)
+# ------------------------------------------------------------
+src/c/bin/
+src/c/*.o
+src/c/*.a
+src/c/*.so
+src/c/*.dll
+
+# ------------------------------------------------------------
+# Platform-specific junk files
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ------------------------------------------------------------
+# Editor / IDE files
+# ------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+tags
+
+# ------------------------------------------------------------
+# Logs / runtime traces
+# ------------------------------------------------------------
+*.log
+logs/
+trace/
+tmp/
+*.tmp
+
+# ------------------------------------------------------------
+# Application internal data that should not be versioned
+# ------------------------------------------------------------
+internal/
+scripts/
+.github/           # ignore if repo should not store CI config
+config/
+generated/
+
+# ------------------------------------------------------------
+# Auxiliary documentation or tooling artifacts
+# (local notes, experiments, or tool configs not meant for version control)
+# ------------------------------------------------------------
+SESSION_NOTES.md
+docs_private/
+tooling/
+local_config/
+*.ignore
+*.private/
+
+# ------------------------------------------------------------
+# Tool-specific directories not meant for publishing
+# ------------------------------------------------------------
+.claude/
+.claudeignore
+CLAUDE.md

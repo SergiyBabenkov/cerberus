@@ -1,0 +1,39 @@
+[package]
+name = "cerberus"
+version = "0.1.0"
+edition = "2024"
+authors = ["Sergiy Babenkov <babenkov.sergiy@gmail.com>"]
+description = "Lightweight TCP connection health monitor for message delivery systems"
+license = "MIT"
+repository = "https://github.com/SergiyBabenkov/cerberus"
+keywords = ["tcp", "monitoring", "network", "health-check", "low-latency"]
+categories = ["network-programming", "command-line-utilities"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+ctrlc = "3.4"
+threadpool = "1.8"
+parking_lot = "0.12"
+libc = "0.2"  # For Netlink syscalls and Linux kernel interfaces
+
+[features]
+default = ["netlink"]
+netlink = []           # Enable Netlink INET_DIAG implementation
+legacy_ss = []         # Enable legacy ss command implementation
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+debug = false
+panic = "abort"          # No unwinding machinery (smaller & slightly faster)
+incremental = false      # Avoid incremental artifacts that can interfere with PGO
+overflow-checks = false  # Already default in release, but explicit is fine
+
+[profile.dev]
+opt-level = 1               # Use slightly better optimizations.
+overflow-checks = false     # Disable integer overflow checks.
+debug = true
+
