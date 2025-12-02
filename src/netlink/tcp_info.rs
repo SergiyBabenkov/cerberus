@@ -514,17 +514,9 @@ pub fn tcp_info_to_metrics(info: &TcpInfo) -> TcpMetrics {
         // These are critical metrics but only available on kernel 5.5+.
         // On older kernels, we'll have 0 (which is technically correct -
         // the field doesn't exist, so we don't have the data).
-        bytes_sent: info
-            .extended
-            .as_ref()
-            .map(|e| e.tcpi_bytes_sent)
-            .unwrap_or(0),
+        bytes_sent: info.extended.as_ref().map_or(0, |e| e.tcpi_bytes_sent),
 
-        bytes_retrans: info
-            .extended
-            .as_ref()
-            .map(|e| e.tcpi_bytes_retrans)
-            .unwrap_or(0),
+        bytes_retrans: info.extended.as_ref().map_or(0, |e| e.tcpi_bytes_retrans),
 
         // === Congestion and packet metrics (from basic fields) ===
         //

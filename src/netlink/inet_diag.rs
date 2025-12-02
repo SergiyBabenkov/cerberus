@@ -534,10 +534,7 @@ impl TcpConnectionData {
         {
             Some(TcpInfoExtended {
                 // RTT metrics
-                tcpi_min_rtt: metrics
-                    .min_rtt_ms
-                    .map(|ms| (ms * 1000.0) as u32)
-                    .unwrap_or(0),
+                tcpi_min_rtt: metrics.min_rtt_ms.map_or(0, |ms| (ms * 1000.0) as u32),
 
                 // Rate metrics (convert to  correct units if needed)
                 tcpi_delivery_rate: metrics.delivery_rate_bps.unwrap_or(0),
@@ -649,9 +646,9 @@ pub fn query_tcp_connection(
     //
     // Convert string IP addresses to Ipv4Addr structures.
     // This validates the IP format and converts to binary representation.
-    let local_addr: Ipv4Addr = local_ip.parse().map_err(|e| {
-        InetDiagError::Other(format!("Invalid local IP address '{local_ip}': {e}"))
-    })?;
+    let local_addr: Ipv4Addr = local_ip
+        .parse()
+        .map_err(|e| InetDiagError::Other(format!("Invalid local IP address '{local_ip}': {e}")))?;
 
     let remote_addr: Ipv4Addr = remote_ip.parse().map_err(|e| {
         InetDiagError::Other(format!("Invalid remote IP address '{remote_ip}': {e}"))
@@ -832,9 +829,9 @@ pub fn query_tcp_connections_batch(
     // We query all connections from this local socket, then filter.
     let (local_ip, local_port, _, _) = &connections[0];
 
-    let local_addr: Ipv4Addr = local_ip.parse().map_err(|e| {
-        InetDiagError::Other(format!("Invalid local IP address '{local_ip}': {e}"))
-    })?;
+    let local_addr: Ipv4Addr = local_ip
+        .parse()
+        .map_err(|e| InetDiagError::Other(format!("Invalid local IP address '{local_ip}': {e}")))?;
 
     // === Create socket ===
     let socket = NetlinkSocket::new()?;
