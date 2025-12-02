@@ -37,8 +37,8 @@ pub mod netlink;
 /// Queue size thresholds. These detect message delivery problems in systems
 /// with typical message sizes of 1-2KB per message.
 pub const SEND_QUEUE_CRITICAL: u32 = 4096; // ≥2 messages stuck; connection likely broken
-pub const SEND_QUEUE_WARNING: u32 = 2048;  // ≥1 message stuck; degraded delivery
-pub const SEND_QUEUE_SUSPECT: u32 = 1024;  // Partial message stuck; worth monitoring
+pub const SEND_QUEUE_WARNING: u32 = 2048; // ≥1 message stuck; degraded delivery
+pub const SEND_QUEUE_SUSPECT: u32 = 1024; // Partial message stuck; worth monitoring
 
 pub const DEFAULT_HTTP_PORT: u16 = 8888;
 pub const MAX_CONNECTIONS: usize = 100;
@@ -101,7 +101,6 @@ pub struct TcpMetrics {
     // ========================================================================
     // CORE METRICS: Always available (kernel 3.10+)
     // ========================================================================
-
     /// Round-trip time in milliseconds (time for data to travel to remote and back).
     /// Health indicators:
     /// - < 50ms: Excellent (local/fast link)
@@ -159,7 +158,6 @@ pub struct TcpMetrics {
     // ========================================================================
     // EXTENDED METRICS: Optional, kernel version dependent
     // ========================================================================
-
     /// Minimum RTT observed on this connection (milliseconds, kernel 4.6+).
     /// Health indicators:
     /// - Establishes baseline latency for this path
@@ -333,6 +331,7 @@ pub const fn default_true() -> bool {
 /// Note: `TcpMetrics` is boxed (425 bytes → 8 byte pointer) to optimize enum size.
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
+#[allow(clippy::large_enum_variant)]
 pub enum MonitorResponse {
     /// Response for single connection query (when `remote_port` specified)
     Single {
@@ -910,8 +909,8 @@ fn parse_ss_batch_output(
 
         // Build single-connection output with pre-allocated capacity
         let header = "State Recv-Q Send-Q Local Remote";
-        let estimated_capacity = header.len() + line.len() + 2
-            + metric_lines.iter().map(|l| l.len() + 1).sum::<usize>();
+        let estimated_capacity =
+            header.len() + line.len() + 2 + metric_lines.iter().map(|l| l.len() + 1).sum::<usize>();
 
         let mut single_output = String::with_capacity(estimated_capacity);
         single_output.push_str(header);
