@@ -838,27 +838,27 @@ impl TcpHealthSample {
         self.timestamp.elapsed()
     }
 
-    /// Create TcpHealthSample from TcpInfo (netlink) + queue sizes
+    /// Create `TcpHealthSample` from `TcpInfo` (netlink) + queue sizes
     ///
     /// === USAGE ===
-    /// Converts raw TCP_INFO data from netlink query into TcpHealthSample
-    /// for storage in ConnectionHistory.
+    /// Converts raw `TCP_INFO` data from netlink query into `TcpHealthSample`
+    /// for storage in `ConnectionHistory`.
     ///
     /// === PARAMETERS ===
-    /// - tcp_info: Raw TCP_INFO from netlink inet_diag query
-    /// - send_queue_bytes: From InetDiagMsg.idiag_wqueue (write queue)
-    /// - recv_queue_bytes: From InetDiagMsg.idiag_rqueue (read queue)
-    /// - tcp_state: From InetDiagMsg.idiag_state (TCP state)
+    /// - `tcp_info`: Raw `TCP_INFO` from netlink `inet_diag` query
+    /// - `send_queue_bytes`: From `InetDiagMsg.idiag_wqueue` (write queue)
+    /// - `recv_queue_bytes`: From `InetDiagMsg.idiag_rqueue` (read queue)
+    /// - `tcp_state`: From `InetDiagMsg.idiag_state` (TCP state)
     ///
     /// === KERNEL VERSION COMPATIBILITY ===
     /// - Basic fields: Always available (kernel 3.10+, RHEL 7+)
     /// - Extended fields: Use 0 if not available (kernel < 4.6/4.9/5.5)
     ///
     /// This function handles the Option<TcpInfoExtended> by using
-    /// .unwrap_or(0) or checking if Some() before accessing.
+    /// .`unwrap_or(0)` or checking if `Some()` before accessing.
     ///
     /// === LINUX ONLY ===
-    /// Only available on Linux (requires netlink tcp_info module)
+    /// Only available on Linux (requires netlink `tcp_info` module)
     #[cfg(target_os = "linux")]
     pub fn from_tcp_info(
         tcp_info: &crate::netlink::tcp_info::TcpInfo,
@@ -956,7 +956,7 @@ impl TcpHealthSample {
         }
     }
 
-    /// Create TcpHealthSample from TcpConnectionData (RECOMMENDED for Netlink path)
+    /// Create `TcpHealthSample` from `TcpConnectionData` (RECOMMENDED for Netlink path)
     ///
     /// This is a convenience wrapper around `from_tcp_info()` that accepts
     /// `TcpConnectionData` directly, which is the structure returned by
@@ -967,7 +967,7 @@ impl TcpHealthSample {
     /// This method eliminates the need to manually extract fields from
     /// `TcpConnectionData` when creating health samples. It provides:
     /// 1. Cleaner calling code (one function call instead of unpacking fields)
-    /// 2. Single source of truth (TcpConnectionData contains all data)
+    /// 2. Single source of truth (`TcpConnectionData` contains all data)
     /// 3. Type safety (can't forget queue sizes or state)
     ///
     /// # Example
@@ -2385,18 +2385,18 @@ impl HistoryManager {
     ///
     /// This is the recommended method for adding samples when you have full
     /// TCP connection data from netlink queries. It creates a properly-populated
-    /// TcpHealthSample with all TCP metrics, enabling comprehensive health analysis.
+    /// `TcpHealthSample` with all TCP metrics, enabling comprehensive health analysis.
     ///
     /// # What This Does
     ///
-    /// 1. Accepts TcpConnectionData from netlink query
-    /// 2. Creates TcpHealthSample using from_tcp_info() (populates ALL fields)
+    /// 1. Accepts `TcpConnectionData` from netlink query
+    /// 2. Creates `TcpHealthSample` using `from_tcp_info()` (populates ALL fields)
     /// 3. Adds sample to connection history
     /// 4. Triggers health metric calculations
     ///
-    /// # Versus add_sample_with_local
+    /// # Versus `add_sample_with_local`
     ///
-    /// **Old method (add_sample_with_local)**:
+    /// **Old method (`add_sample_with_local`)**:
     /// - Only sets queue sizes
     /// - All TCP health metrics remain 0
     /// - Health calculations don't work
@@ -2412,7 +2412,7 @@ impl HistoryManager {
     /// * `local_port` - Local port number
     /// * `remote_ip` - Remote IP address
     /// * `remote_port` - Remote port number
-    /// * `conn_data` - TcpConnectionData from netlink query
+    /// * `conn_data` - `TcpConnectionData` from netlink query
     ///
     /// # Example
     ///
@@ -2438,7 +2438,7 @@ impl HistoryManager {
     ///
     /// # Platform Support
     ///
-    /// - **Linux only** - TcpConnectionData comes from Linux Netlink queries
+    /// - **Linux only** - `TcpConnectionData` comes from Linux Netlink queries
     #[cfg(target_os = "linux")]
     pub fn add_sample_from_netlink(
         &mut self,

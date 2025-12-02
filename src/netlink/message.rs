@@ -1,6 +1,6 @@
 //! Netlink message construction and parsing
 //!
-//! This module handles building INET_DIAG request messages and
+//! This module handles building `INET_DIAG` request messages and
 //! parsing multi-part response messages from the kernel.
 //!
 //! # Educational Notes
@@ -43,7 +43,7 @@
 //! [ Message 1 ] [ Message 2 ] [ Message 3 ] [ NLMSG_DONE ]
 //! ```
 //!
-//! We must parse each message until we see NLMSG_DONE.
+//! We must parse each message until we see `NLMSG_DONE`.
 //!
 //! ## Unsafe Code in This Module
 //!
@@ -100,10 +100,10 @@ impl std::error::Error for MessageError {}
 // MESSAGE CONSTRUCTION
 // ============================================================================
 
-/// Build complete INET_DIAG request message
+/// Build complete `INET_DIAG` request message
 ///
-/// This constructs a Netlink message containing an INET_DIAG request.
-/// The message is ready to send via NetlinkSocket.
+/// This constructs a Netlink message containing an `INET_DIAG` request.
+/// The message is ready to send via `NetlinkSocket`.
 ///
 /// # Message Structure
 ///
@@ -120,7 +120,7 @@ impl std::error::Error for MessageError {}
 ///
 /// # Parameters
 ///
-/// * `req` - INET_DIAG request structure (specifies what to query)
+/// * `req` - `INET_DIAG` request structure (specifies what to query)
 /// * `seq` - Sequence number for matching responses (any u32 value)
 ///
 /// # Returns
@@ -239,7 +239,7 @@ pub fn build_inet_diag_request(req: &InetDiagReqV2, seq: u32) -> Vec<u8> {
 ///
 /// # Message Types
 ///
-/// - **InetDiag**: Contains connection information (inet_diag_msg + attributes)
+/// - **`InetDiag`**: Contains connection information (`inet_diag_msg` + attributes)
 /// - **Done**: End of multi-part message (no more data)
 /// - **Error**: Kernel error (contains errno code)
 ///
@@ -269,10 +269,10 @@ pub fn build_inet_diag_request(req: &InetDiagReqV2, seq: u32) -> Vec<u8> {
 /// ```
 #[derive(Debug)]
 pub enum ParsedMessage {
-    /// inet_diag_msg with optional attributes
+    /// `inet_diag_msg` with optional attributes
     ///
     /// Contains connection info (state, addresses, queues) and
-    /// optional attributes like tcp_info, congestion algorithm name, etc.
+    /// optional attributes like `tcp_info`, congestion algorithm name, etc.
     InetDiag {
         msg: InetDiagMsg,
         attributes: HashMap<u16, Vec<u8>>,
@@ -295,7 +295,7 @@ pub enum ParsedMessage {
 /// Parse multi-part Netlink response
 ///
 /// Extracts individual messages from concatenated response data.
-/// The kernel can send multiple messages in one batch, followed by NLMSG_DONE.
+/// The kernel can send multiple messages in one batch, followed by `NLMSG_DONE`.
 ///
 /// # Message Flow
 ///
@@ -316,7 +316,7 @@ pub enum ParsedMessage {
 ///
 /// # Parameters
 ///
-/// * `data` - Raw response bytes from NetlinkSocket::recv_all()
+/// * `data` - Raw response bytes from `NetlinkSocket::recv_all()`
 ///
 /// # Returns
 ///
@@ -504,15 +504,15 @@ pub fn parse_netlink_messages(data: &[u8]) -> Result<Vec<ParsedMessage>, Message
 ///
 /// # Parameters
 ///
-/// * `data` - Attribute data bytes (everything after InetDiagMsg)
+/// * `data` - Attribute data bytes (everything after `InetDiagMsg`)
 ///
 /// # Returns
 ///
-/// HashMap mapping attribute type → payload bytes
+/// `HashMap` mapping attribute type → payload bytes
 ///
 /// Example:
-/// - Key: INET_DIAG_INFO (2) → Value: tcp_info bytes
-/// - Key: INET_DIAG_CONG (4) → Value: "cubic\0" bytes
+/// - Key: `INET_DIAG_INFO` (2) → Value: `tcp_info` bytes
+/// - Key: `INET_DIAG_CONG` (4) → Value: "cubic\0" bytes
 ///
 /// # Example
 ///

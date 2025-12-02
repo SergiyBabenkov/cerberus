@@ -1,11 +1,11 @@
 //! TCP info parsing with kernel version compatibility
 //!
-//! This module handles parsing the `tcp_info` structure from INET_DIAG responses.
-//! The key challenge: tcp_info size varies across kernel versions!
+//! This module handles parsing the `tcp_info` structure from `INET_DIAG` responses.
+//! The key challenge: `tcp_info` size varies across kernel versions!
 //!
 //! # Educational Notes
 //!
-//! ## The tcp_info Structure
+//! ## The `tcp_info` Structure
 //!
 //! `tcp_info` is a kernel structure containing detailed TCP metrics:
 //! - Round-trip time (RTT)
@@ -19,11 +19,11 @@
 //!
 //! ## Kernel Version Challenge
 //!
-//! The tcp_info structure has grown over time:
+//! The `tcp_info` structure has grown over time:
 //! - Kernel 3.10 (RHEL 7): ~192 bytes, basic metrics
-//! - Kernel 4.2 (RHEL 8): ~232 bytes, added bytes_sent/bytes_retrans
-//! - Kernel 4.6+: Added more fields (min_rtt, delivery_rate)
-//! - Kernel 5.5+: Added even more (bytes_sent moved to kernel 5.5)
+//! - Kernel 4.2 (RHEL 8): ~232 bytes, added `bytes_sent/bytes_retrans`
+//! - Kernel 4.6+: Added more fields (`min_rtt`, `delivery_rate`)
+//! - Kernel 5.5+: Added even more (`bytes_sent` moved to kernel 5.5)
 //!
 //! **Problem:** If we define a struct sized for kernel 5.5, it won't work on kernel 3.10!
 //!
@@ -59,7 +59,7 @@ use crate::TcpMetrics; // From lib.rs
 // ERROR TYPES
 // ============================================================================
 
-/// Errors that can occur during tcp_info parsing
+/// Errors that can occur during `tcp_info` parsing
 #[derive(Debug)]
 pub struct TcpInfoError {
     message: String,
@@ -83,15 +83,15 @@ impl std::error::Error for TcpInfoError {}
 // TCP INFO STRUCTURES
 // ============================================================================
 
-/// Basic tcp_info fields (kernel 3.10+, RHEL 7+)
+/// Basic `tcp_info` fields (kernel 3.10+, RHEL 7+)
 ///
 /// This structure contains fields guaranteed to be present in all kernel versions
-/// we support. Size: 232 bytes (up to and including tcpi_total_retrans).
+/// we support. Size: 232 bytes (up to and including `tcpi_total_retrans`).
 ///
 /// # Memory Layout
 ///
 /// This structure uses #[repr(C)] to match kernel layout exactly.
-/// Fields are in the same order as kernel's tcp_info structure.
+/// Fields are in the same order as kernel's `tcp_info` structure.
 ///
 /// # Compatibility
 ///
@@ -164,16 +164,16 @@ pub struct TcpInfoBasic {
                                  // Total size up to here: 8 + 8 + 8 + 20 + 16 + 40 + 4 = 104 bytes
 }
 
-/// Extended tcp_info fields (kernel 4.2+, RHEL 8+)
+/// Extended `tcp_info` fields (kernel 4.2+, RHEL 8+)
 ///
 /// These fields are present in newer kernels. Not all may be available
 /// depending on exact kernel version.
 ///
 /// # Availability
 ///
-/// - Kernel 4.2+: bytes_acked, bytes_received
-/// - Kernel 4.6+: min_rtt, delivery_rate
-/// - Kernel 5.5+: bytes_sent, bytes_retrans (critical for us!)
+/// - Kernel 4.2+: `bytes_acked`, `bytes_received`
+/// - Kernel 4.6+: `min_rtt`, `delivery_rate`
+/// - Kernel 5.5+: `bytes_sent`, `bytes_retrans` (critical for us!)
 ///
 /// # Usage
 ///
@@ -217,7 +217,7 @@ pub struct TcpInfoExtended {
     pub tcpi_snd_wnd: u32,     // Advertised send window
 }
 
-/// Complete tcp_info with flexible parsing
+/// Complete `tcp_info` with flexible parsing
 ///
 /// This combines basic metrics (always present) with extended metrics
 /// (available on newer kernels).
@@ -253,7 +253,7 @@ pub struct TcpInfo {
 // PARSING FUNCTIONS
 // ============================================================================
 
-/// Parse tcp_info from attribute bytes
+/// Parse `tcp_info` from attribute bytes
 ///
 /// This function handles variable structure size across kernel versions.
 /// It parses the basic fields (always present) and extended fields if
@@ -262,18 +262,18 @@ pub struct TcpInfo {
 /// # Strategy
 ///
 /// 1. Check buffer has minimum size for basic fields (~104 bytes)
-/// 2. Parse basic fields by casting bytes to TcpInfoBasic structure
+/// 2. Parse basic fields by casting bytes to `TcpInfoBasic` structure
 /// 3. Check if buffer has extended fields (size > basic size)
 /// 4. If yes, parse extended fields
-/// 5. Return TcpInfo with basic + optional extended
+/// 5. Return `TcpInfo` with basic + optional extended
 ///
 /// # Parameters
 ///
-/// * `data` - Raw tcp_info bytes from INET_DIAG_INFO attribute
+/// * `data` - Raw `tcp_info` bytes from `INET_DIAG_INFO` attribute
 ///
 /// # Returns
 ///
-/// * `Ok(TcpInfo)` - Successfully parsed tcp_info
+/// * `Ok(TcpInfo)` - Successfully parsed `tcp_info`
 /// * `Err(TcpInfoError)` - Buffer too small or parse error
 ///
 /// # Kernel Compatibility
@@ -345,13 +345,13 @@ pub fn parse_tcp_info(data: &[u8]) -> Result<TcpInfo, TcpInfoError> {
     Ok(TcpInfo { basic, extended })
 }
 
-/// Parse extended tcp_info fields from remaining buffer
+/// Parse extended `tcp_info` fields from remaining buffer
 ///
 /// This function extracts extended fields field-by-field, handling
 /// partial structures gracefully. If buffer is too small for a field,
 /// we use default value (0).
 ///
-/// # Why Not Cast to TcpInfoExtended?
+/// # Why Not Cast to `TcpInfoExtended`?
 ///
 /// We can't safely cast because:
 /// 1. Buffer might be partial (not all fields present)
@@ -360,11 +360,11 @@ pub fn parse_tcp_info(data: &[u8]) -> Result<TcpInfo, TcpInfoError> {
 ///
 /// # Parameters
 ///
-/// * `data` - Bytes after TcpInfoBasic (extended field region)
+/// * `data` - Bytes after `TcpInfoBasic` (extended field region)
 ///
 /// # Returns
 ///
-/// TcpInfoExtended with as many fields as buffer contains
+/// `TcpInfoExtended` with as many fields as buffer contains
 fn parse_extended_fields(data: &[u8]) -> TcpInfoExtended {
     let mut ext = TcpInfoExtended::default();
     let mut offset: usize = 0;
@@ -452,10 +452,10 @@ fn parse_extended_fields(data: &[u8]) -> TcpInfoExtended {
     ext
 }
 
-/// Convert TcpInfo to TcpMetrics (our application structure)
+/// Convert `TcpInfo` to `TcpMetrics` (our application structure)
 ///
-/// This maps the kernel's tcp_info structure to our application's
-/// TcpMetrics structure (defined in lib.rs).
+/// This maps the kernel's `tcp_info` structure to our application's
+/// `TcpMetrics` structure (defined in lib.rs).
 ///
 /// # Conversions
 ///
@@ -466,17 +466,17 @@ fn parse_extended_fields(data: &[u8]) -> TcpInfoExtended {
 ///
 /// # Kernel Compatibility
 ///
-/// - **Kernel 3.10+ (RHEL 7+)**: Basic metrics + some extended (lost, total_retrans, ssthresh, pmtu, last_data_sent)
-/// - **Kernel 4.6+ (RHEL 8+)**: Adds min_rtt, delivery_rate
-/// - **Kernel 4.9+ (RHEL 8+)**: Adds busy_time, rwnd_limited, sndbuf_limited
+/// - **Kernel 3.10+ (RHEL 7+)**: Basic metrics + some extended (lost, `total_retrans`, ssthresh, pmtu, `last_data_sent`)
+/// - **Kernel 4.6+ (RHEL 8+)**: Adds `min_rtt`, `delivery_rate`
+/// - **Kernel 4.9+ (RHEL 8+)**: Adds `busy_time`, `rwnd_limited`, `sndbuf_limited`
 ///
 /// # Parameters
 ///
-/// * `info` - Parsed tcp_info from kernel
+/// * `info` - Parsed `tcp_info` from kernel
 ///
 /// # Returns
 ///
-/// TcpMetrics ready for health assessment
+/// `TcpMetrics` ready for health assessment
 ///
 /// # Example
 ///

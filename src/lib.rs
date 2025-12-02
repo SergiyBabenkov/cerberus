@@ -1114,10 +1114,10 @@ pub fn get_tcp_metrics_via_ss(
     output_parsing(&output_str)
 }
 
-/// Get TCP metrics via native Linux Netlink INET_DIAG (RECOMMENDED)
+/// Get TCP metrics via native Linux Netlink `INET_DIAG` (RECOMMENDED)
 ///
 /// This function queries TCP connection metrics directly from the Linux kernel
-/// using Netlink INET_DIAG protocol. It replaces the legacy `get_tcp_metrics_via_ss()`
+/// using Netlink `INET_DIAG` protocol. It replaces the legacy `get_tcp_metrics_via_ss()`
 /// with much better performance.
 ///
 /// # Performance Comparison
@@ -1131,18 +1131,18 @@ pub fn get_tcp_metrics_via_ss(
 ///
 /// # How It Works
 ///
-/// 1. Opens Netlink socket (AF_NETLINK, NETLINK_INET_DIAG)
-/// 2. Sends INET_DIAG_REQ_V2 message with connection 4-tuple
-/// 3. Receives INET_DIAG_MSG response from kernel
-/// 4. Extracts tcp_info structure from INET_DIAG_INFO attribute
-/// 5. Parses tcp_info (handles kernel 3.10+ and 4.2+ formats)
-/// 6. Converts to TcpMetrics structure
+/// 1. Opens Netlink socket (`AF_NETLINK`, `NETLINK_INET_DIAG`)
+/// 2. Sends `INET_DIAG_REQ_V2` message with connection 4-tuple
+/// 3. Receives `INET_DIAG_MSG` response from kernel
+/// 4. Extracts `tcp_info` structure from `INET_DIAG_INFO` attribute
+/// 5. Parses `tcp_info` (handles kernel 3.10+ and 4.2+ formats)
+/// 6. Converts to `TcpMetrics` structure
 ///
 /// # Kernel Compatibility
 ///
 /// - **RHEL 7 (kernel 3.10)**: Basic metrics only (RTT, cwnd, retrans)
-///   - bytes_sent/bytes_retrans may be 0 (not available in kernel)
-/// - **RHEL 8/9 (kernel 4.18+)**: Full metrics including bytes_sent/bytes_retrans
+///   - `bytes_sent/bytes_retrans` may be 0 (not available in kernel)
+/// - **RHEL 8/9 (kernel 4.18+)**: Full metrics including `bytes_sent/bytes_retrans`
 ///
 /// # Arguments
 ///
@@ -1181,7 +1181,7 @@ pub fn get_tcp_metrics_via_ss(
 /// # Platform Support
 ///
 /// - **Linux only** - Uses Linux-specific Netlink interface
-/// - Compiles only on Linux targets (target_os = "linux")
+/// - Compiles only on Linux targets (`target_os` = "linux")
 /// - On non-Linux platforms, this function is not available
 #[cfg(all(target_os = "linux", feature = "netlink"))]
 pub fn get_tcp_metrics_via_netlink(
@@ -1207,7 +1207,7 @@ pub fn get_tcp_metrics_via_netlink(
 /// Get complete TCP connection data via Netlink (RECOMMENDED)
 ///
 /// This function returns comprehensive TCP connection information including:
-/// - Full tcp_info structure (RTT, retransmissions, congestion window, etc.)
+/// - Full `tcp_info` structure (RTT, retransmissions, congestion window, etc.)
 /// - Queue sizes (send queue and receive queue bytes)
 /// - TCP state (ESTABLISHED, etc.)
 ///
@@ -1216,14 +1216,14 @@ pub fn get_tcp_metrics_via_netlink(
 ///
 /// # Performance
 ///
-/// - Direct kernel query via Netlink INET_DIAG
+/// - Direct kernel query via Netlink `INET_DIAG`
 /// - Latency: 0.1-0.5 ms (10-50x faster than subprocess `ss`)
 /// - No process spawning overhead
 ///
 /// # Returns
 ///
 /// `TcpConnectionData` containing:
-/// - `tcp_info`: Full TCP_INFO from kernel (all metrics)
+/// - `tcp_info`: Full `TCP_INFO` from kernel (all metrics)
 /// - `send_queue_bytes`: Bytes waiting to be sent
 /// - `recv_queue_bytes`: Bytes waiting to be read
 /// - `tcp_state`: Connection state (1=ESTABLISHED, etc.)
@@ -1248,7 +1248,7 @@ pub fn get_tcp_metrics_via_netlink(
 /// # Platform Support
 ///
 /// - **Linux only** - Uses Linux-specific Netlink interface
-/// - RHEL 7: Requires root or CAP_NET_ADMIN capability
+/// - RHEL 7: Requires root or `CAP_NET_ADMIN` capability
 /// - RHEL 8/9: Works without root
 #[cfg(all(target_os = "linux", feature = "netlink"))]
 pub fn get_tcp_connection_data_via_netlink(
@@ -1281,8 +1281,8 @@ pub fn get_tcp_connection_data_via_netlink(
 /// 1. Extracts local socket (IP:port) from first connection
 /// 2. Queries kernel for ALL connections from that local socket
 /// 3. Filters results to match requested remote addresses
-/// 4. Converts each TcpInfo to TcpMetrics
-/// 5. Returns HashMap mapping connection → metrics
+/// 4. Converts each `TcpInfo` to `TcpMetrics`
+/// 5. Returns `HashMap` mapping connection → metrics
 ///
 /// # Requirement
 ///
@@ -1291,11 +1291,11 @@ pub fn get_tcp_connection_data_via_netlink(
 ///
 /// # Arguments
 ///
-/// * `connections` - Slice of (local_ip, local_port, remote_ip, remote_port) tuples
+/// * `connections` - Slice of (`local_ip`, `local_port`, `remote_ip`, `remote_port`) tuples
 ///
 /// # Returns
 ///
-/// HashMap mapping connection tuple to TcpMetrics
+/// `HashMap` mapping connection tuple to `TcpMetrics`
 ///
 /// # Example
 ///
@@ -1368,7 +1368,7 @@ pub fn get_tcp_metrics_batch_netlink(
 ///
 /// # Returns
 ///
-/// HashMap mapping connection tuple to TcpConnectionData
+/// `HashMap` mapping connection tuple to `TcpConnectionData`
 ///
 /// # Example
 ///
@@ -1885,15 +1885,15 @@ pub fn assess_connection_health_with_history(
     health
 }
 
-/// Assess connection health using TcpConnectionData (RECOMMENDED for Netlink path)
+/// Assess connection health using `TcpConnectionData` (RECOMMENDED for Netlink path)
 ///
 /// This is the modern, recommended API for assessing TCP connection health.
 /// It accepts `TcpConnectionData` directly, eliminating the need to convert
-/// to intermediate TcpMetrics structure.
+/// to intermediate `TcpMetrics` structure.
 ///
 /// # Benefits Over Legacy API
 ///
-/// - **Simpler**: No intermediate TcpMetrics conversion
+/// - **Simpler**: No intermediate `TcpMetrics` conversion
 /// - **Faster**: Eliminates allocation and field copying
 /// - **More accurate**: Uses convenience methods with proper unit conversion
 /// - **Type-safe**: Can't lose queue data during conversion
