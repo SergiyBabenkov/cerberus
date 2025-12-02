@@ -876,36 +876,58 @@ impl TcpHealthSample {
             busy_time_us,
             rwnd_limited_us,
             sndbuf_limited_us,
-        ) = if let Some(ref ext) = tcp_info.extended {
-            (
-                ext.tcpi_min_rtt,
-                ext.tcpi_delivery_rate,
-                ext.tcpi_pacing_rate,
-                ext.tcpi_busy_time,
-                ext.tcpi_rwnd_limited,
-                ext.tcpi_sndbuf_limited,
-            )
-        } else {
-            // Extended fields not available (kernel < 4.6/4.9)
-            (0, 0, 0, 0, 0, 0)
-        };
+        ) = tcp_info
+            .extended
+            .as_ref()
+            .map_or((0, 0, 0, 0, 0, 0), |ext| {
+                (
+                    ext.tcpi_min_rtt,
+                    ext.tcpi_delivery_rate,
+                    ext.tcpi_pacing_rate,
+                    ext.tcpi_busy_time,
+                    ext.tcpi_rwnd_limited,
+                    ext.tcpi_sndbuf_limited,
+                )
+            });
+        // ) = if let Some(ref ext) = tcp_info.extended {
+        //     (
+        //         ext.tcpi_min_rtt,
+        //         ext.tcpi_delivery_rate,
+        //         ext.tcpi_pacing_rate,
+        //         ext.tcpi_busy_time,
+        //         ext.tcpi_rwnd_limited,
+        //         ext.tcpi_sndbuf_limited,
+        //     )
+        // } else {
+        //     // Extended fields not available (kernel < 4.6/4.9)
+        //     (0, 0, 0, 0, 0, 0)
+        // };
 
         // Byte-level counters (kernel 5.5+, only in TcpInfoExtended)
         // Note: These fields might not exist in extended on older kernels
-        let (bytes_sent, bytes_retrans, bytes_acked) = if let Some(ref ext) = tcp_info.extended {
-            // These fields were added in later kernel versions
-            // If they're 0, it could mean either:
-            // 1. No data sent/acked yet, OR
-            // 2. Kernel doesn't support these fields
-            // We can't distinguish, so we just use the values as-is
-            (
-                ext.tcpi_bytes_sent,
-                ext.tcpi_bytes_retrans,
-                ext.tcpi_bytes_acked,
-            )
-        } else {
-            (0, 0, 0)
-        };
+        // These fields were added in later kernel versions
+        // If they're 0, it could mean either:
+        // 1. No data sent/acked yet, OR
+        // 2. Kernel doesn't support these fields
+        // We can't distinguish, so we just use the values as-is
+        let (bytes_sent, bytes_retrans, bytes_acked) =
+            tcp_info.extended.as_ref().map_or((0, 0, 0), |ext| {
+                (
+                    ext.tcpi_bytes_sent,
+                    ext.tcpi_bytes_retrans,
+                    ext.tcpi_bytes_acked,
+                )
+            });
+
+        // if let Some(ref ext) = tcp_info.extended {
+        //     (
+        //         ext.tcpi_bytes_sent,
+        //         ext.tcpi_bytes_retrans,
+        //         ext.tcpi_bytes_acked,
+        //     )
+        // } else {
+        //     (0, 0, 0)
+        // };
 
         TcpHealthSample {
             // Timestamp
