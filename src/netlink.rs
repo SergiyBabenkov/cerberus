@@ -4,50 +4,7 @@
 //! TCP socket information. It replaces subprocess-based `ss` command
 //! with direct kernel queries for 10-50x performance improvement.
 //!
-//! # Architecture
 //!
-//! ## Phase 1: Core Infrastructure (COMPLETED)
-//! - `socket`: Low-level Netlink socket management (syscalls, RAII)
-//! - `structures`: Binary structures matching kernel layout (repr(C))
-//!
-//! ## Phase 2: `INET_DIAG` Protocol (COMPLETED)
-//! - `message`: Message construction and parsing
-//! - `inet_diag`: High-level `INET_DIAG` query functions
-//! - `tcp_info`: TCP metrics parsing and conversion
-//!
-//! # Educational Notes
-//!
-//! ## What is a Module in Rust?
-//!
-//! A module is Rust's way of organizing code into namespaces.
-//! - `mod.rs` is the module root file (like `__init__.py` in Python)
-//! - Other files are submodules (like `socket.rs`, `structures.rs`)
-//! - Visibility controlled by `pub` keyword
-//!
-//! ## Module Declaration
-//!
-//! ```rust
-//! mod socket;        // Private: only this module can use it
-//! pub mod socket;    // Public: other modules can use it
-//! ```
-//!
-//! ## Re-exports
-//!
-//! We can make items easier to access:
-//! ```rust
-//! pub use socket::NetlinkSocket;
-//! // Now users can write:
-//! // use cerberus::netlink::NetlinkSocket;
-//! // instead of:
-//! // use cerberus::netlink::socket::NetlinkSocket;
-//! ```
-//!
-//! ## Conditional Compilation
-//!
-//! Some modules are Linux-only (Netlink is a Linux-specific kernel interface).
-//! We use #[`cfg(target_os` = "linux")] to compile them only on Linux.
-//! This allows the code to compile on macOS for development while clearly
-//! marking which parts are platform-specific.
 
 // ============================================================================
 // SUBMODULE DECLARATIONS
@@ -108,13 +65,3 @@ pub use tcp_info::{
     TcpInfoExtended,     // Extended metrics (kernel 4.2+, RHEL 8+)
     tcp_info_to_metrics, // Convert TcpInfo to TcpMetrics (for integration)
 };
-
-// === INTERNAL MODULES (kept private) ===
-//
-// The following modules are implementation details and not exposed:
-// - socket::NetlinkSocket - Low-level Netlink socket management
-// - structures::* - Binary protocol structures (repr(C))
-// - message::* - Message construction and parsing
-//
-// Users of this library don't need to interact with these directly.
-// They use the high-level query_tcp_connection() API instead.
