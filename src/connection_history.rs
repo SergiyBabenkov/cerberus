@@ -326,18 +326,7 @@ pub struct HealthMetric<T> {
 impl<T> HealthMetric<T> {
     /// Create new health metric with value and explanation
     ///
-    /// === CONVENIENCE CONSTRUCTOR ===
-    /// This is shorter than creating the struct directly:
-    ///
-    /// Instead of:
-    /// ```rust
-    /// HealthMetric { value: true, explanation: "...".to_string() }
-    /// ```
-    ///
-    /// You can write:
-    /// ```rust
-    /// HealthMetric::new(true, "...".to_string())
-    /// ```
+
     pub fn new(value: T, explanation: String) -> Self {
         Self { value, explanation }
     }
@@ -408,14 +397,7 @@ pub struct QueueSample {
 
 impl QueueSample {
     /// Create new queue sample with current timestamp
-    ///
-    /// === SELF TYPE ===
-    /// Return type 'Self' is shorthand for '`QueueSample`'
-    /// It's a common Rust idiom for constructor functions
-    ///
-    /// === FIELD INIT SHORTHAND ===
-    /// `send_queue_bytes`: `send_queue_bytes` can be shortened to just: `send_queue_bytes`,
-    /// Rust infers the field name matches parameter name
+
     #[must_use]
     pub fn new(send_queue_bytes: u32, recv_queue_bytes: u32) -> Self {
         Self {
@@ -812,19 +794,6 @@ impl TcpHealthSample {
                     ext.tcpi_sndbuf_limited,
                 )
             });
-        // ) = if let Some(ref ext) = tcp_info.extended {
-        //     (
-        //         ext.tcpi_min_rtt,
-        //         ext.tcpi_delivery_rate,
-        //         ext.tcpi_pacing_rate,
-        //         ext.tcpi_busy_time,
-        //         ext.tcpi_rwnd_limited,
-        //         ext.tcpi_sndbuf_limited,
-        //     )
-        // } else {
-        //     // Extended fields not available (kernel < 4.6/4.9)
-        //     (0, 0, 0, 0, 0, 0)
-        // };
 
         // Byte-level counters (kernel 5.5+, only in TcpInfoExtended)
         // Note: These fields might not exist in extended on older kernels
@@ -841,16 +810,6 @@ impl TcpHealthSample {
                     ext.tcpi_bytes_acked,
                 )
             });
-
-        // if let Some(ref ext) = tcp_info.extended {
-        //     (
-        //         ext.tcpi_bytes_sent,
-        //         ext.tcpi_bytes_retrans,
-        //         ext.tcpi_bytes_acked,
-        //     )
-        // } else {
-        //     (0, 0, 0)
-        // };
 
         TcpHealthSample {
             // Timestamp
@@ -915,41 +874,6 @@ impl TcpHealthSample {
     /// 2. Single source of truth (`TcpConnectionData` contains all data)
     /// 3. Type safety (can't forget queue sizes or state)
     ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// # use cerberus::netlink::inet_diag::query_tcp_connection;
-    /// # use cerberus::connection_history::TcpHealthSample;
-    /// // Query connection via Netlink
-    /// let conn_data = query_tcp_connection("192.168.1.5", 8080, "10.0.1.1", 5000)?;
-    ///
-    /// // Create health sample (clean, one-line)
-    /// let sample = TcpHealthSample::from_tcp_connection_data(&conn_data);
-    ///
-    /// println!("RTT: {} μs", sample.rtt_us);
-    /// println!("Send queue: {} bytes", sample.send_queue_bytes);
-    /// # Ok::<(), cerberus::netlink::inet_diag::InetDiagError>(())
-    /// ```
-    ///
-    /// # Old Approach (still works but more verbose)
-    ///
-    /// ```no_run
-    /// # use cerberus::netlink::inet_diag::query_tcp_connection;
-    /// # use cerberus::connection_history::TcpHealthSample;
-    /// let conn_data = query_tcp_connection("192.168.1.5", 8080, "10.0.1.1", 5000)?;
-    ///
-    /// // Manual field extraction (verbose, error-prone)
-    /// let sample = TcpHealthSample::from_tcp_info(
-    ///     &conn_data.tcp_info,
-    ///     conn_data.send_queue_bytes,
-    ///     conn_data.recv_queue_bytes,
-    ///     conn_data.tcp_state,
-    /// );
-    /// # Ok::<(), cerberus::netlink::inet_diag::InetDiagError>(())
-    /// ```
-    ///
-    /// === LINUX ONLY ===
-    /// Only available on Linux (requires netlink feature)
     #[cfg(target_os = "linux")]
     pub fn from_tcp_connection_data(conn_data: &crate::netlink::TcpConnectionData) -> Self {
         Self::from_tcp_info(
@@ -2326,64 +2250,6 @@ impl HistoryManager {
         history.add_sample(sample);
     }
 
-    /// Add sample with full TCP health data from Netlink (RECOMMENDED)
-    ///
-    /// This is the recommended method for adding samples when you have full
-    /// TCP connection data from netlink queries. It creates a properly-populated
-    /// `TcpHealthSample` with all TCP metrics, enabling comprehensive health analysis.
-    ///
-    /// # What This Does
-    ///
-    /// 1. Accepts `TcpConnectionData` from netlink query
-    /// 2. Creates `TcpHealthSample` using `from_tcp_info()` (populates ALL fields)
-    /// 3. Adds sample to connection history
-    /// 4. Triggers health metric calculations
-    ///
-    /// # Versus `add_sample_with_local`
-    ///
-    /// **Old method (`add_sample_with_local`)**:
-    /// - Only sets queue sizes
-    /// - All TCP health metrics remain 0
-    /// - Health calculations don't work
-    ///
-    /// **New method (this function)**:
-    /// - Sets queue sizes + RTT + retransmits + cwnd + all metrics
-    /// - Full TCP health data available
-    /// - Health calculations work properly
-    ///
-    /// # Parameters
-    ///
-    /// * `local_ip` - Local IP address
-    /// * `local_port` - Local port number
-    /// * `remote_ip` - Remote IP address
-    /// * `remote_port` - Remote port number
-    /// * `conn_data` - `TcpConnectionData` from netlink query
-    ///
-    /// # Example
-    ///
-    /// ```no_run
-    /// # use cerberus::{HistoryManager, get_tcp_connection_data_via_netlink};
-    /// let mut manager = HistoryManager::new();
-    ///
-    /// // Query netlink for full connection data
-    /// let conn_data = get_tcp_connection_data_via_netlink(
-    ///     "192.168.1.5", 8080, "10.0.1.1", 5000
-    /// )?;
-    ///
-    /// // Add to history with full TCP health data
-    /// manager.add_sample_from_netlink(
-    ///     "192.168.1.5",
-    ///     8080,
-    ///     "10.0.1.1",
-    ///     5000,
-    ///     &conn_data,
-    /// );
-    /// # Ok::<(), String>(())
-    /// ```
-    ///
-    /// # Platform Support
-    ///
-    /// - **Linux only** - `TcpConnectionData` comes from Linux Netlink queries
     #[cfg(target_os = "linux")]
     pub fn add_sample_from_netlink(
         &mut self,
@@ -2407,18 +2273,6 @@ impl HistoryManager {
             .entry(key)
             .or_insert_with(|| ConnectionHistory::new(remote_ip.to_string(), remote_port));
 
-        // === CREATE FULLY-POPULATED TCP HEALTH SAMPLE ===
-        // This uses from_tcp_info() which populates ALL TCP health fields:
-        // - Queue sizes (send_queue_bytes, recv_queue_bytes)
-        // - Timing (last_data_sent_ms, last_ack_recv_ms)
-        // - RTT metrics (rtt_us, rtt_var_us, min_rtt_us)
-        // - Congestion (snd_cwnd, snd_ssthresh)
-        // - Loss (retrans, total_retrans, lost)
-        // - Bottleneck (busy_time_us, rwnd_limited_us, sndbuf_limited_us)
-        // - Byte counters (bytes_sent, bytes_retrans, bytes_acked)
-        // - TCP state (tcp_state)
-        //
-        // This ensures health calculations work properly!
         let sample = TcpHealthSample::from_tcp_info(
             &conn_data.tcp_info,
             conn_data.send_queue_bytes,
