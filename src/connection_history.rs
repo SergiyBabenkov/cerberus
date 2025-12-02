@@ -1,46 +1,25 @@
-// ============================================================================
-// CONNECTION HISTORY TRACKING AND TREND ANALYSIS
-// ============================================================================
-// This module keeps historical data for TCP connection metrics to enable
-// statistical analysis and trend detection.
+// TCP connection history tracking and health trend analysis.
 //
-// === WHY TRACK HISTORY? ===
-// A single snapshot of connection state isn't enough to detect problems:
-// - Is the queue growing (getting worse)?
-// - Is the queue shrinking (recovering)?
-// - Is the connection stable or flapping?
-//
-// Historical tracking answers these questions by:
-// 1. Storing last 10 samples (queue sizes, timestamps)
-// 2. Calculating velocity (bytes/second change)
-// 3. Calculating acceleration (is velocity increasing?)
-// 4. Detecting persistent problems (high queue for 3+ samples)
-//
-// === MEMORY SAFETY ===
-// Rust's ownership system ensures:
-// - No memory leaks (automatic cleanup via Drop trait)
-// - No dangling pointers (impossible to reference freed memory)
-// - Thread safety (Send/Sync traits enforce proper concurrency)
+// Maintains a sliding window (last 10 samples) of TCP metrics per connection.
+// Detects problems by analyzing:
+// - Queue velocity and acceleration (growing/shrinking trends)
+// - Staleness (no activity for N milliseconds)
+// - Half-open connections (sending but no ACKs)
+// - Packet loss and retransmissions
+// - RTT drift and jitter (latency instability)
+// - Bottleneck identification (sender vs receiver vs network)
+// - Congestion state transitions
 
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, VecDeque}; // HashMap = hash table, VecDeque = double-ended queue
-use std::time::{Duration, Instant}; // Time measurement types // JSON serialization
+use std::collections::{HashMap, VecDeque};
+use std::time::{Duration, Instant};
 
 // ============================================================================
 // CONSTANTS: CONFIGURATION VALUES
 // ============================================================================
 
-/// Maximum number of historical samples to keep per connection
-///
-/// === WHY 10? ===
-/// - Enough history for trend analysis (velocity, acceleration)
-/// - Not too much memory per connection
-/// - Represents ~10 seconds of data if sampled every second
-///
-/// === MEMORY IMPACT ===
-/// Each `QueueSample` is ~24 bytes (timestamp + 2 u32s + padding)
-/// 10 samples = ~240 bytes per connection
-/// With 100 connections = ~24KB total (very reasonable)
+/// Maximum number of historical samples to keep per connection (enough for trend analysis)
+/// Each `TcpHealthSample` is ~160 bytes; 10 samples = ~1.6KB per connection.
 const MAX_HISTORY_SIZE: usize = 10;
 
 /// Time window for moving averages (samples)
@@ -323,21 +302,7 @@ const CWND_DECREASE_THRESHOLD: u32 = 2;
 /// <T> means this works with any type: bool, f64, u32, String, etc.
 /// This is Rust's way of writing reusable code without sacrificing type safety.
 ///
-/// === USAGE EXAMPLE ===
-/// ```rust
-/// let metric = HealthMetric {
-///     value: true,
-///     explanation: "Connection stale: no data sent for 1800ms (threshold: 1500ms)".to_string()
-/// };
-/// ```
-///
-/// === JSON OUTPUT ===
-/// ```json
-/// {
-///   "value": true,
-///   "explanation": "Connection stale: no data sent for 1800ms (threshold: 1500ms)"
-/// }
-/// ```
+
 ///
 /// === DERIVE TRAITS ===
 /// - Debug: For printing during development (e.g., println!("{:?}", metric))
@@ -383,16 +348,7 @@ impl<T> HealthMetric<T> {
 /// === TYPE ALIAS ===
 /// This is just a shorthand for `HealthMetric`<bool>
 /// Makes the code more readable and self-documenting.
-///
-/// === USAGE ===
-/// ```rust
-/// pub stale_confirmed: Option<HealthFlag>
-/// ```
-///
-/// Is clearer than:
-/// ```rust
-/// pub stale_confirmed: Option<HealthMetric<bool>>
-/// ```
+
 pub type HealthFlag = HealthMetric<bool>;
 
 /// Numeric health value (for ratios, percentages, rates, etc.)
@@ -400,11 +356,7 @@ pub type HealthFlag = HealthMetric<bool>;
 /// === TYPE ALIAS ===
 /// Shorthand for `HealthMetric`<f64>
 /// Used for continuous metrics like RTT drift, jitter index, loss rate.
-///
-/// === USAGE ===
-/// ```rust
-/// pub rtt_drift: Option<HealthValue>
-/// ```
+
 pub type HealthValue = HealthMetric<f64>;
 
 /// Optional health metric (None if cannot calculate due to missing data)
@@ -419,11 +371,7 @@ pub type HealthValue = HealthMetric<f64>;
 /// - Loss rate requires `bytes_sent` (kernel 5.5+)
 ///
 /// If the required data is unavailable, the metric is None (omitted from JSON).
-///
-/// === USAGE ===
-/// ```rust
-/// pub rtt_drift: OptionalHealthMetric<f64>  // Same as: Option<HealthMetric<f64>>
-/// ```
+
 pub type OptionalHealthMetric<T> = Option<HealthMetric<T>>;
 
 /// Queue sample: snapshot of queue sizes at specific time
@@ -759,20 +707,6 @@ pub struct TcpHealthSample {
 
 impl TcpHealthSample {
     /// Create minimal `TcpHealthSample` with only queue sizes (for testing/simple cases)
-    ///
-    /// === USAGE ===
-    /// When you only have queue data and not full `TCP_INFO`.
-    /// All TCP metrics will be zero/defaults.
-    ///
-    /// For production use with real TCP connections, use `from_tcp_info()` instead.
-    ///
-    /// === EXAMPLE ===
-    /// ```rust
-    /// let sample = TcpHealthSample::with_queues(1000, 500);
-    /// // sample.send_queue_bytes = 1000
-    /// // sample.recv_queue_bytes = 500
-    /// // All other fields = 0 or defaults
-    /// ```
     #[must_use]
     pub fn with_queues(send_queue_bytes: u32, recv_queue_bytes: u32) -> Self {
         Self {
@@ -815,23 +749,13 @@ impl TcpHealthSample {
     }
 
     /// Check if connection is in ESTABLISHED state
-    ///
-    /// === USAGE ===
-    /// Most health metrics only make sense for ESTABLISHED connections.
-    /// Example:
-    /// ```rust
-    /// if sample.is_established() {
-    ///     // Calculate health metrics
-    /// }
-    /// ```
+
     #[must_use]
     pub const fn is_established(&self) -> bool {
         self.tcp_state == TCP_ESTABLISHED
     }
 
     /// Get time since sample was taken
-    ///
-    /// === USAGE ===
     /// Useful for checking if sample is stale.
     #[must_use]
     pub fn age(&self) -> Duration {
@@ -840,7 +764,6 @@ impl TcpHealthSample {
 
     /// Create `TcpHealthSample` from `TcpInfo` (netlink) + queue sizes
     ///
-    /// === USAGE ===
     /// Converts raw `TCP_INFO` data from netlink query into `TcpHealthSample`
     /// for storage in `ConnectionHistory`.
     ///
