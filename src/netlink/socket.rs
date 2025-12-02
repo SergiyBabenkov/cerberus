@@ -1,6 +1,6 @@
 //! Netlink socket management
 //!
-//! Provides safe wrapper around AF_NETLINK socket lifecycle.
+//! Provides safe wrapper around `AF_NETLINK` socket lifecycle.
 //! Uses RAII (Resource Acquisition Is Initialization) pattern
 //! to ensure socket is always closed when dropped.
 //!
@@ -60,7 +60,7 @@
 //! - 0 = stdin, 1 = stdout, 2 = stderr
 //! - 3+ = other open files/sockets
 //!
-//! Our socket is represented by a RawFd (raw file descriptor).
+//! Our socket is represented by a `RawFd` (raw file descriptor).
 
 // This module only compiles on Linux (Netlink is Linux-specific)
 // #![cfg(target_os = "linux")]
@@ -70,12 +70,12 @@ use std::os::unix::io::RawFd;
 
 /// Errors that can occur during Netlink socket operations
 ///
-/// This wraps std::io::Error for socket syscalls.
+/// This wraps `std::io::Error` for socket syscalls.
 ///
 /// # Why a custom error type?
 ///
 /// We want to provide context-specific error messages:
-/// - "socket() failed: Permission denied" is more helpful than just "Permission denied"
+/// - "`socket()` failed: Permission denied" is more helpful than just "Permission denied"
 /// - We can add our own error handling logic
 /// - Type safety: functions return our specific error type
 #[derive(Debug)]
@@ -110,7 +110,7 @@ impl std::error::Error for SocketError {}
 
 /// Netlink socket wrapper with automatic cleanup
 ///
-/// This struct wraps a raw file descriptor for an AF_NETLINK socket.
+/// This struct wraps a raw file descriptor for an `AF_NETLINK` socket.
 /// When dropped, it automatically closes the socket (RAII pattern).
 ///
 /// # Example
@@ -142,23 +142,23 @@ pub struct NetlinkSocket {
 }
 
 impl NetlinkSocket {
-    /// Create new Netlink socket for SOCK_DIAG protocol
+    /// Create new Netlink socket for `SOCK_DIAG` protocol
     ///
     /// This performs the following steps:
-    /// 1. Create AF_NETLINK socket
+    /// 1. Create `AF_NETLINK` socket
     /// 2. Bind to kernel
     /// 3. Set socket options (buffer size, timeout)
     ///
     /// # Errors
     ///
     /// Returns `SocketError` if:
-    /// - socket() syscall fails (permission denied, etc.)
-    /// - bind() fails
-    /// - setsockopt() fails
+    /// - `socket()` syscall fails (permission denied, etc.)
+    /// - `bind()` fails
+    /// - `setsockopt()` fails
     ///
     /// # Platform Support
     ///
-    /// - RHEL 7: Requires root or CAP_NET_ADMIN
+    /// - RHEL 7: Requires root or `CAP_NET_ADMIN`
     /// - RHEL 8/9: Works without root
     ///
     /// # Example
@@ -289,7 +289,7 @@ impl NetlinkSocket {
     /// # Errors
     ///
     /// Returns `SocketError` if:
-    /// - sendto() fails (connection refused, etc.)
+    /// - `sendto()` fails (connection refused, etc.)
     /// - Not all bytes were sent (short send)
     ///
     /// # Example
@@ -355,7 +355,7 @@ impl NetlinkSocket {
     /// # Errors
     ///
     /// Returns `SocketError` if:
-    /// - recv() fails
+    /// - `recv()` fails
     /// - Timeout occurs (after 1 second)
     ///
     /// # Example
@@ -404,7 +404,7 @@ impl NetlinkSocket {
     /// Receive complete multi-part message
     ///
     /// This handles Netlink multi-part responses, receiving all messages
-    /// until NLMSG_DONE is received or timeout occurs.
+    /// until `NLMSG_DONE` is received or timeout occurs.
     ///
     /// # Returns
     ///
@@ -412,7 +412,7 @@ impl NetlinkSocket {
     ///
     /// # Errors
     ///
-    /// Returns `SocketError` if recv() fails
+    /// Returns `SocketError` if `recv()` fails
     ///
     /// # Example
     ///
@@ -469,16 +469,16 @@ impl NetlinkSocket {
         Ok(all_data)
     }
 
-    /// Check if data contains NLMSG_DONE message
+    /// Check if data contains `NLMSG_DONE` message
     ///
     /// Helper function to detect end of multi-part message.
     ///
     /// # Safety
     ///
-    /// This function uses unsafe pointer cast to interpret bytes as NlMsgHdr.
+    /// This function uses unsafe pointer cast to interpret bytes as `NlMsgHdr`.
     /// This is safe because:
     /// 1. We check data is large enough first
-    /// 2. NlMsgHdr is POD (Plain Old Data) with repr(C)
+    /// 2. `NlMsgHdr` is POD (Plain Old Data) with repr(C)
     /// 3. We only read, never write
     fn contains_done_message(data: &[u8]) -> bool {
         use crate::netlink::structures::{NLMSG_DONE, NlMsgHdr};
@@ -499,13 +499,13 @@ impl NetlinkSocket {
 /// Automatic cleanup when socket is dropped
 ///
 /// This implements the Drop trait to ensure socket is always closed.
-/// Rust calls drop() automatically when value goes out of scope.
+/// Rust calls `drop()` automatically when value goes out of scope.
 ///
 /// # RAII Pattern
 ///
 /// This is Rust's equivalent of C++ RAII:
-/// - Resource (socket) acquired in constructor (new())
-/// - Resource automatically freed in destructor (drop())
+/// - Resource (socket) acquired in constructor (`new()`)
+/// - Resource automatically freed in destructor (`drop()`)
 /// - No way to forget to close socket!
 ///
 /// # Example

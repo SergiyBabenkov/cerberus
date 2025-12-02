@@ -1,7 +1,7 @@
-//! High-level INET_DIAG query API
+//! High-level `INET_DIAG` query API
 //!
 //! This module provides easy-to-use functions for querying TCP connection information
-//! using Linux's INET_DIAG protocol via Netlink.
+//! using Linux's `INET_DIAG` protocol via Netlink.
 //!
 //! # Educational Notes
 //!
@@ -12,8 +12,8 @@
 //! 2. Builds Netlink request messages
 //! 3. Sends them to kernel via socket
 //! 4. Receives and parses responses
-//! 5. Extracts tcp_info from attributes
-//! 6. Returns easy-to-use TcpInfo structures
+//! 5. Extracts `tcp_info` from attributes
+//! 6. Returns easy-to-use `TcpInfo` structures
 //!
 //! ## API Design
 //!
@@ -22,21 +22,21 @@
 //! **Single Connection Query:**
 //! - `query_tcp_connection()` - Query one specific connection by 4-tuple
 //! - Fast: kernel returns only the matching connection
-//! - Returns: TcpInfo or NotFound error
+//! - Returns: `TcpInfo` or `NotFound` error
 //!
 //! **Batch Query:**
 //! - `query_tcp_connections_batch()` - Query multiple connections at once
 //! - Efficient: one kernel query, filter results
-//! - Returns: HashMap of connection → TcpInfo
+//! - Returns: `HashMap` of connection → `TcpInfo`
 //!
 //! ## Error Handling Strategy
 //!
 //! We use enum-based errors to distinguish different failure modes:
 //! - Socket errors (can't open socket, permission denied)
 //! - Message errors (malformed responses)
-//! - TcpInfo errors (can't parse tcp_info)
-//! - NotFound (connection doesn't exist)
-//! - PermissionDenied (need root on RHEL 7)
+//! - `TcpInfo` errors (can't parse `tcp_info`)
+//! - `NotFound` (connection doesn't exist)
+//! - `PermissionDenied` (need root on RHEL 7)
 //!
 //! This allows callers to handle each case appropriately.
 //!
@@ -61,7 +61,7 @@ use std::net::Ipv4Addr;
 // ERROR TYPES
 // ============================================================================
 
-/// Errors that can occur during INET_DIAG queries
+/// Errors that can occur during `INET_DIAG` queries
 ///
 /// This enum covers all possible error cases, allowing callers to
 /// handle each situation appropriately.
@@ -70,9 +70,9 @@ use std::net::Ipv4Addr;
 ///
 /// - **Socket errors**: Can't open socket, permission denied
 /// - **Message errors**: Malformed response, parse failures
-/// - **TcpInfo errors**: Can't parse tcp_info structure
-/// - **NotFound**: Connection doesn't exist (not an error, just no data)
-/// - **PermissionDenied**: Need root/CAP_NET_ADMIN (RHEL 7)
+/// - **`TcpInfo` errors**: Can't parse `tcp_info` structure
+/// - **`NotFound`**: Connection doesn't exist (not an error, just no data)
+/// - **`PermissionDenied`**: Need `root/CAP_NET_ADMIN` (RHEL 7)
 ///
 /// # Example
 ///
@@ -93,7 +93,7 @@ pub enum InetDiagError {
     /// Message parsing failed
     Message(MessageError),
 
-    /// tcp_info parsing failed
+    /// `tcp_info` parsing failed
     TcpInfo(TcpInfoError),
 
     /// Connection not found (not an error, just no match)
@@ -124,21 +124,21 @@ impl std::fmt::Display for InetDiagError {
 
 impl std::error::Error for InetDiagError {}
 
-/// Convert SocketError to InetDiagError
+/// Convert `SocketError` to `InetDiagError`
 impl From<SocketError> for InetDiagError {
     fn from(e: SocketError) -> Self {
         InetDiagError::Socket(e)
     }
 }
 
-/// Convert MessageError to InetDiagError
+/// Convert `MessageError` to `InetDiagError`
 impl From<MessageError> for InetDiagError {
     fn from(e: MessageError) -> Self {
         InetDiagError::Message(e)
     }
 }
 
-/// Convert TcpInfoError to InetDiagError
+/// Convert `TcpInfoError` to `InetDiagError`
 impl From<TcpInfoError> for InetDiagError {
     fn from(e: TcpInfoError) -> Self {
         InetDiagError::TcpInfo(e)
@@ -149,19 +149,19 @@ impl From<TcpInfoError> for InetDiagError {
 // DATA STRUCTURES
 // ============================================================================
 
-/// Complete TCP connection data from INET_DIAG query
+/// Complete TCP connection data from `INET_DIAG` query
 ///
 /// This structure combines data from multiple sources in the Netlink response:
-/// - InetDiagMsg: Queue sizes and TCP state
-/// - INET_DIAG_INFO attribute: Full tcp_info structure
+/// - `InetDiagMsg`: Queue sizes and TCP state
+/// - `INET_DIAG_INFO` attribute: Full `tcp_info` structure
 ///
 /// # Why This Exists
 ///
-/// The Netlink INET_DIAG response provides two pieces of information:
-/// 1. **InetDiagMsg**: Basic connection info (queue sizes, state)
-/// 2. **Attributes**: Extended data like tcp_info (RTT, retransmits, etc.)
+/// The Netlink `INET_DIAG` response provides two pieces of information:
+/// 1. **`InetDiagMsg`**: Basic connection info (queue sizes, state)
+/// 2. **Attributes**: Extended data like `tcp_info` (RTT, retransmits, etc.)
 ///
-/// Previously, we only returned tcp_info and threw away the queue sizes.
+/// Previously, we only returned `tcp_info` and threw away the queue sizes.
 /// This struct captures ALL data so nothing is lost.
 ///
 /// # Usage
@@ -182,7 +182,7 @@ impl From<TcpInfoError> for InetDiagError {
 /// ```
 #[derive(Debug, Clone)]
 pub struct TcpConnectionData {
-    /// Full TCP_INFO structure from kernel
+    /// Full `TCP_INFO` structure from kernel
     ///
     /// Contains all TCP metrics: RTT, retransmissions, congestion window, etc.
     /// Available on all supported kernels (3.10+).
@@ -190,7 +190,7 @@ pub struct TcpConnectionData {
 
     /// Bytes waiting in send queue (data waiting to be sent)
     ///
-    /// From InetDiagMsg.idiag_wqueue.
+    /// From `InetDiagMsg.idiag_wqueue`.
     /// High values indicate:
     /// - Application writing faster than network can send
     /// - Network congestion
@@ -199,7 +199,7 @@ pub struct TcpConnectionData {
 
     /// Bytes waiting in receive queue (data waiting to be read by application)
     ///
-    /// From InetDiagMsg.idiag_rqueue.
+    /// From `InetDiagMsg.idiag_rqueue`.
     /// High values indicate:
     /// - Application reading slower than data arriving
     /// - Application is the bottleneck
@@ -207,12 +207,12 @@ pub struct TcpConnectionData {
 
     /// TCP connection state
     ///
-    /// From InetDiagMsg.idiag_state.
-    /// Values (from Linux kernel tcp_states.h):
-    /// - 1 = TCP_ESTABLISHED (connection is active)
-    /// - 2 = TCP_SYN_SENT (connection attempt in progress)
-    /// - 3 = TCP_SYN_RECV (connection being established)
-    /// - 4 = TCP_FIN_WAIT1 (closing)
+    /// From `InetDiagMsg.idiag_state`.
+    /// Values (from Linux kernel `tcp_states.h)`:
+    /// - 1 = `TCP_ESTABLISHED` (connection is active)
+    /// - 2 = `TCP_SYN_SENT` (connection attempt in progress)
+    /// - 3 = `TCP_SYN_RECV` (connection being established)
+    /// - 4 = `TCP_FIN_WAIT1` (closing)
     /// - ... (other closing states)
     ///
     /// Most health metrics only make sense for ESTABLISHED connections.
@@ -287,7 +287,7 @@ impl TcpConnectionData {
 
     /// Get current congestion window size
     ///
-    /// Number of packets that can be in-flight (sent but not ACKed).
+    /// Number of packets that can be in-flight (sent but not `ACKed`).
     /// Lower values indicate congestion or packet loss.
     ///
     /// # Returns
@@ -358,7 +358,7 @@ impl TcpConnectionData {
     ///
     /// # Returns
     ///
-    /// true if state is TCP_ESTABLISHED (1)
+    /// true if state is `TCP_ESTABLISHED` (1)
     #[inline]
     pub fn is_established(&self) -> bool {
         self.tcp_state == 1 // TCP_ESTABLISHED
@@ -428,30 +428,30 @@ impl TcpConnectionData {
             .map(|ext| ext.tcpi_delivery_rate)
     }
 
-    /// Create TcpConnectionData from legacy ConnectionInfo and TcpMetrics (for compatibility)
+    /// Create `TcpConnectionData` from legacy `ConnectionInfo` and `TcpMetrics` (for compatibility)
     ///
     /// This constructor enables legacy code paths (like ss parsing) to create
-    /// TcpConnectionData for use with modern APIs like assess_connection_health_v2().
+    /// `TcpConnectionData` for use with modern APIs like `assess_connection_health_v2()`.
     ///
     /// # Limitations
     ///
-    /// This creates a "synthetic" TcpInfo structure by reverse-engineering from
-    /// TcpMetrics. Some data loss occurs because:
-    /// - TcpMetrics stores RTT in milliseconds, TcpInfo uses microseconds (precision loss)
-    /// - Many TcpInfo fields not present in TcpMetrics (set to 0)
-    /// - Extended metrics may be missing (depends on TcpMetrics optional fields)
+    /// This creates a "synthetic" `TcpInfo` structure by reverse-engineering from
+    /// `TcpMetrics`. Some data loss occurs because:
+    /// - `TcpMetrics` stores RTT in milliseconds, `TcpInfo` uses microseconds (precision loss)
+    /// - Many `TcpInfo` fields not present in `TcpMetrics` (set to 0)
+    /// - Extended metrics may be missing (depends on `TcpMetrics` optional fields)
     ///
     /// # Why This Exists
     ///
     /// Allows gradual migration from old API to new API:
-    /// 1. Legacy ss path continues to parse into TcpMetrics
-    /// 2. Convert TcpMetrics → TcpConnectionData using this function
-    /// 3. Use new assess_connection_health_v2() with unified API
+    /// 1. Legacy ss path continues to parse into `TcpMetrics`
+    /// 2. Convert `TcpMetrics` → `TcpConnectionData` using this function
+    /// 3. Use new `assess_connection_health_v2()` with unified API
     ///
     /// # Recommended Migration Path
     ///
-    /// - **Short term**: Use this for legacy_ss compatibility
-    /// - **Long term**: Parse ss output directly into TcpConnectionData (skip TcpMetrics)
+    /// - **Short term**: Use this for `legacy_ss` compatibility
+    /// - **Long term**: Parse ss output directly into `TcpConnectionData` (skip `TcpMetrics`)
     ///
     /// # Example
     ///
@@ -614,7 +614,7 @@ impl TcpConnectionData {
 ///
 /// # Returns
 ///
-/// * `Ok(TcpInfo)` - Connection found, tcp_info returned
+/// * `Ok(TcpInfo)` - Connection found, `tcp_info` returned
 /// * `Err(InetDiagError::NotFound)` - Connection doesn't exist
 /// * `Err(InetDiagError::PermissionDenied)` - Need root (RHEL 7)
 /// * `Err(...)` - Other errors
@@ -637,7 +637,7 @@ impl TcpConnectionData {
 ///
 /// # Platform Support
 ///
-/// - RHEL 7: Requires root or CAP_NET_ADMIN capability
+/// - RHEL 7: Requires root or `CAP_NET_ADMIN` capability
 /// - RHEL 8/9: Works without root
 pub fn query_tcp_connection(
     local_ip: &str,
@@ -775,7 +775,7 @@ pub fn query_tcp_connection(
 /// Query multiple TCP connections efficiently in batch
 ///
 /// This queries all connections from a local socket and filters to the
-/// requested remote addresses. More efficient than calling query_tcp_connection()
+/// requested remote addresses. More efficient than calling `query_tcp_connection()`
 /// multiple times.
 ///
 /// # Strategy
@@ -784,7 +784,7 @@ pub fn query_tcp_connection(
 /// 2. Send one request to kernel
 /// 3. Kernel returns all connections from that local socket
 /// 4. Filter results to match requested remote addresses
-/// 5. Return HashMap of matching connections
+/// 5. Return `HashMap` of matching connections
 ///
 /// # Performance
 ///
@@ -794,11 +794,11 @@ pub fn query_tcp_connection(
 ///
 /// # Parameters
 ///
-/// * `connections` - Slice of (local_ip, local_port, remote_ip, remote_port) tuples
+/// * `connections` - Slice of (`local_ip`, `local_port`, `remote_ip`, `remote_port`) tuples
 ///
 /// # Returns
 ///
-/// HashMap mapping connection tuple → TcpInfo
+/// `HashMap` mapping connection tuple → `TcpInfo`
 ///
 /// # Example
 ///
@@ -928,18 +928,18 @@ pub fn query_tcp_connections_batch(
 // HELPER FUNCTIONS
 // ============================================================================
 
-/// Extract tcp_info from attributes HashMap
+/// Extract `tcp_info` from attributes `HashMap`
 ///
-/// Looks for INET_DIAG_INFO attribute and parses tcp_info structure.
+/// Looks for `INET_DIAG_INFO` attribute and parses `tcp_info` structure.
 ///
 /// # Parameters
 ///
-/// * `attrs` - Attributes HashMap from ParsedMessage::InetDiag
+/// * `attrs` - Attributes `HashMap` from `ParsedMessage::InetDiag`
 ///
 /// # Returns
 ///
-/// * `Ok(Some(TcpInfo))` - tcp_info found and parsed
-/// * `Ok(None)` - No INET_DIAG_INFO attribute (shouldn't happen if we requested it)
+/// * `Ok(Some(TcpInfo))` - `tcp_info` found and parsed
+/// * `Ok(None)` - No `INET_DIAG_INFO` attribute (shouldn't happen if we requested it)
 /// * `Err(...)` - Parse error
 fn extract_tcp_info_from_attributes(
     attrs: &HashMap<u16, Vec<u8>>,
@@ -956,7 +956,7 @@ fn extract_tcp_info_from_attributes(
     }
 }
 
-/// Extract IPv4 address from InetDiagSockId
+/// Extract IPv4 address from `InetDiagSockId`
 ///
 /// Converts binary IPv4 address (u32 in network byte order) to string.
 ///

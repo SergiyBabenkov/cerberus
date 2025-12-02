@@ -95,8 +95,7 @@ use cerberus::{
     DEFAULT_HTTP_PORT,                     // Constant: default port number
     HistoryManager,                        // Tracks queue sizes over time for trend analysis
     MonitorRequest,                        // JSON format for incoming requests
-    MonitorResponse,                       // JSON format for responses (Single or Multiple)
-    assess_connection_health_with_history, // Health scoring algorithm (legacy)
+    MonitorResponse, // Health scoring algorithm (legacy)
     extract_remote_parts,                  // Parse "IP:port" string
     find_connections_in_proc,              // Find all connections matching criteria
     find_single_connection,                // Find one specific connection
