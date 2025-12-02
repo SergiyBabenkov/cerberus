@@ -32,7 +32,7 @@ use threadpool::ThreadPool;
 
 use cerberus::{
     ConfigResponse, ConnectionInfo, ConnectionWithHealth, DEFAULT_HTTP_PORT, HistoryManager,
-    MonitorRequest, MonitorResponse, extract_remote_parts,
+    MonitorRequest, MonitorResponse, assess_connection_health_with_history, extract_remote_parts,
     find_connections_in_proc, find_single_connection,
 };
 
