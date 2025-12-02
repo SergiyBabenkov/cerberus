@@ -116,6 +116,7 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                             req.established_only,
                         ) {
                             Ok(conn_info) => {
+                                #[allow(unused_variables)]
                                 let (remote_ip, remote_port) =
                                     extract_remote_parts(&conn_info.remote_address);
 
@@ -460,7 +461,10 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                                 };
 
                                 // Build response with health assessment
-                                let mut conn_with_health: Vec<ConnectionWithHealth> = conn_data
+                                #[allow(unused_variables)]
+                                let mut conn_with_health: Vec<
+                                    ConnectionWithHealth,
+                                > = conn_data
                                     .into_iter()
                                     .zip(histories)
                                     .map(
