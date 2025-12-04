@@ -114,7 +114,7 @@ pub struct TcpMetrics {
     /// Health indicators:
     /// - Low variance: Stable path, predictable latency
     /// - High variance: Network congestion, routing changes, packet prioritization
-    /// Interpretation: If `rtt_var_ms` is > 50% of `rtt_ms`, path is unstable
+    ///   Interpretation: If `rtt_var_ms` is > 50% of `rtt_ms`, path is unstable
     pub rtt_var_ms: f64,
 
     /// Total bytes successfully sent on this connection (cumulative counter).
@@ -127,7 +127,7 @@ pub struct TcpMetrics {
     /// - 0: No packet loss detected (excellent)
     /// - > 0: Packet loss occurred (poor network quality)
     /// - High value: Persistent network issues or congestion
-    /// Interpretation: Compare to `bytes_sent` to calculate loss rate
+    ///   Interpretation: Compare to `bytes_sent` to calculate loss rate
     pub bytes_retrans: u64,
 
     /// Send congestion window size (in packets, not bytes).
@@ -162,7 +162,7 @@ pub struct TcpMetrics {
     /// Health indicators:
     /// - Establishes baseline latency for this path
     /// - (`rtt_ms` - `min_rtt_ms`) = current latency overhead due to congestion
-    /// Interpretation: If current RTT >> `min_rtt`, congestion is adding delay
+    ///   Interpretation: If current RTT >> `min_rtt`, congestion is adding delay
     #[serde(skip_serializing_if = "Option::is_none")]
     pub min_rtt_ms: Option<f64>,
 
@@ -171,7 +171,7 @@ pub struct TcpMetrics {
     /// Health indicators:
     /// - High value: Connection using bandwidth efficiently
     /// - Low value: Congestion, packet loss, or receiver slow to read data
-    /// Interpretation: Compare to application requirements to detect bottlenecks
+    ///   Interpretation: Compare to application requirements to detect bottlenecks
     #[serde(skip_serializing_if = "Option::is_none")]
     pub delivery_rate_bps: Option<u64>,
 
@@ -188,8 +188,8 @@ pub struct TcpMetrics {
     /// Receiver window = buffer space on remote host. High value means:
     /// - Receiver's buffer is full
     /// - Receiver application is slow to read data
-    /// NOT a sender problem - receiver is the bottleneck
-    /// Health indicators:
+    ///   NOT a sender problem - receiver is the bottleneck
+    ///   Health indicators:
     /// - 0: Receiver always has buffer space
     /// - > 0: Receiver is slow; tune receiver buffer or app
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -220,7 +220,7 @@ pub struct TcpMetrics {
     /// - 0: No retransmissions ever
     /// - > 0: Past packet loss events
     /// - High value: Persistent network issues
-    /// Interpretation: Use to assess overall connection quality over time
+    ///   Interpretation: Use to assess overall connection quality over time
     #[serde(skip_serializing_if = "Option::is_none")]
     pub total_retrans: Option<u32>,
 
@@ -232,7 +232,7 @@ pub struct TcpMetrics {
     /// - ssthresh < cwnd: Congestion avoidance (linear growth)
     /// - ssthresh << cwnd: Recent packet loss (congestion); recovering
     /// - ssthresh very low (<5): Connection recently experienced congestion event
-    /// Interpretation: Low ssthresh + high unacked = connection struggling with congestion
+    ///   Interpretation: Low ssthresh + high unacked = connection struggling with congestion
     #[serde(skip_serializing_if = "Option::is_none")]
     pub snd_ssthresh: Option<u32>,
 
@@ -254,7 +254,7 @@ pub struct TcpMetrics {
     /// - 1492: `PPPoE` (8 bytes less for protocol header)
     /// - 9000: Jumbo frames (high-performance networks)
     /// - < 1500: Path includes tunnels, VPNs, or other constraints
-    /// Health impact: Lower MTU reduces throughput (more packets needed per byte)
+    ///   Health impact: Lower MTU reduces throughput (more packets needed per byte)
     #[serde(skip_serializing_if = "Option::is_none")]
     pub pmtu: Option<u32>,
 }
@@ -374,7 +374,7 @@ pub struct ConfigResponse {
 /// Inlined for performance in hot parsing loops.
 #[inline]
 #[must_use]
-pub fn get_tcp_state_name(state: u8) -> &'static str {
+pub const fn get_tcp_state_name(state: u8) -> &'static str {
     match state {
         TCP_ESTABLISHED => "ESTABLISHED",
         TCP_SYN_SENT => "SYN_SENT",

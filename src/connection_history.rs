@@ -295,14 +295,11 @@ const CWND_DECREASE_THRESHOLD: u32 = 2;
 //
 // This makes the JSON output self-documenting and easier to understand for
 // operators troubleshooting connection issues.
-
 /// Health metric with calculated value and human-readable explanation
 ///
 /// === GENERIC TYPE PARAMETER ===
 /// <T> means this works with any type: bool, f64, u32, String, etc.
 /// This is Rust's way of writing reusable code without sacrificing type safety.
-///
-
 ///
 /// === DERIVE TRAITS ===
 /// - Debug: For printing during development (e.g., println!("{:?}", metric))
@@ -325,9 +322,7 @@ pub struct HealthMetric<T> {
 
 impl<T> HealthMetric<T> {
     /// Create new health metric with value and explanation
-    ///
-
-    pub fn new(value: T, explanation: String) -> Self {
+    pub const fn new(value: T, explanation: String) -> Self {
         Self { value, explanation }
     }
 }
@@ -337,7 +332,6 @@ impl<T> HealthMetric<T> {
 /// === TYPE ALIAS ===
 /// This is just a shorthand for `HealthMetric`<bool>
 /// Makes the code more readable and self-documenting.
-
 pub type HealthFlag = HealthMetric<bool>;
 
 /// Numeric health value (for ratios, percentages, rates, etc.)
@@ -345,7 +339,6 @@ pub type HealthFlag = HealthMetric<bool>;
 /// === TYPE ALIAS ===
 /// Shorthand for `HealthMetric`<f64>
 /// Used for continuous metrics like RTT drift, jitter index, loss rate.
-
 pub type HealthValue = HealthMetric<f64>;
 
 /// Optional health metric (None if cannot calculate due to missing data)
@@ -360,7 +353,6 @@ pub type HealthValue = HealthMetric<f64>;
 /// - Loss rate requires `bytes_sent` (kernel 5.5+)
 ///
 /// If the required data is unavailable, the metric is None (omitted from JSON).
-
 pub type OptionalHealthMetric<T> = Option<HealthMetric<T>>;
 
 /// Queue sample: snapshot of queue sizes at specific time
@@ -397,7 +389,6 @@ pub struct QueueSample {
 
 impl QueueSample {
     /// Create new queue sample with current timestamp
-
     #[must_use]
     pub fn new(send_queue_bytes: u32, recv_queue_bytes: u32) -> Self {
         Self {
@@ -423,7 +414,7 @@ impl QueueSample {
     ///
     /// 'as u64' performs a safe widening cast (no data loss)
     #[must_use]
-    pub fn total_queue(&self) -> u64 {
+    pub const fn total_queue(&self) -> u64 {
         (self.send_queue_bytes as u64) + (self.recv_queue_bytes as u64)
     }
 }
@@ -726,12 +717,11 @@ impl TcpHealthSample {
     /// === COMPATIBILITY ===
     /// Maintains compatibility with `QueueSample` API for queue-based metrics.
     #[must_use]
-    pub fn total_queue(&self) -> u64 {
+    pub const fn total_queue(&self) -> u64 {
         (self.send_queue_bytes as u64) + (self.recv_queue_bytes as u64)
     }
 
     /// Check if connection is in ESTABLISHED state
-
     #[must_use]
     pub const fn is_established(&self) -> bool {
         self.tcp_state == TCP_ESTABLISHED
