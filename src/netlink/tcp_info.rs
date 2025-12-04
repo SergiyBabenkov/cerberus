@@ -164,7 +164,7 @@ pub struct TcpInfoBasic {
                                  // Total size up to here: 8 + 8 + 8 + 20 + 16 + 40 + 4 = 104 bytes
 }
 
-/// # Memory Layout (x86_64)
+/// # Memory Layout (`x86_64`)
 /// ```text
 /// Offset  Size  Field
 ///   0-7    8    State and options (8 x u8)
