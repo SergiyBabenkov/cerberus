@@ -22,11 +22,11 @@
 // parking_lot::RwLock is faster than std::sync::RwLock (no poisoning overhead)
 use parking_lot::RwLock;
 
+use core::sync::atomic::{AtomicBool, Ordering as AtomicOrdering};
 use std::env;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering as AtomicOrdering};
 use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use threadpool::ThreadPool;
 
@@ -84,7 +84,7 @@ compile_error!(
 /// Reads the HTTP request, routes to appropriate endpoint, and sends JSON response.
 /// Runs in a worker thread from the thread pool.
 fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManager>>) {
-    let mut buffer = [0u8; 4096];
+    let mut buffer = [0_u8; 4096];
 
     if let Ok(bytes_read) = stream.read(&mut buffer) {
         let request = String::from_utf8_lossy(&buffer[..bytes_read]);
@@ -93,9 +93,8 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
         // POST /monitor - Main monitoring endpoint
         // ====================================================================
         if request.starts_with("POST /monitor") {
-            if let Some(body_start) = request.find("\r\n\r\n") {
-                let body = &request[body_start + 4..];
-
+            if let Some((_, body)) = request.split_once("\r\n\r\n") {
+                // Parse JSON request body
                 if let Ok(req) = serde_json::from_str::<MonitorRequest>(body) {
                     let local_ip = &req.local_ip;
                     let local_port = req.local_port;
@@ -117,12 +116,10 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                             req.established_only,
                         ) {
                             Ok(conn_info) => {
-                                #[allow(unused_variables)]
                                 let (remote_ip, remote_port) =
                                     extract_remote_parts(&conn_info.remote_address);
 
                                 // Get TCP metrics based on available implementation
-                                #[allow(unused_variables)]
                                 let (remote_ip, remote_port) =
                                     extract_remote_parts(&conn_info.remote_address);
 
@@ -154,7 +151,7 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                                     )))]
                                 let metrics_result: Result<cerberus::TcpMetrics, String> =
                                     Err("TCP metrics not available: build with --features netlink or --features legacy_ss"
-                                        .to_string());
+                                        .to_owned());
 
                                 // Process results and build response
                                 #[cfg(all(target_os = "linux", feature = "netlink"))]
@@ -287,13 +284,7 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                         ) {
                             Ok(connections) => {
                                 // Build list of (local_ip, local_port, remote_ip, remote_port) tuples
-                                #[allow(unused_variables)]
-                                let conn_tuples: Vec<(
-                                    String,
-                                    u16,
-                                    String,
-                                    u16,
-                                )> = connections
+                                let conn_tuples: Vec<(String, u16, String, u16)> = connections
                                     .iter()
                                     .map(|conn_info| {
                                         let (remote_ip, remote_port) =
@@ -462,10 +453,7 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                                 };
 
                                 // Build response with health assessment
-                                #[allow(unused_variables)]
-                                let mut conn_with_health: Vec<
-                                    ConnectionWithHealth,
-                                > = conn_data
+                                let mut conn_with_health: Vec<ConnectionWithHealth> = conn_data
                                     .into_iter()
                                     .zip(histories)
                                     .map(
@@ -599,8 +587,7 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
             // ====================================================================
             let config_resp = ConfigResponse {
                 http_server_info:
-                    "Cerberus TCP Monitor v0.1.0 - Dynamic socket monitoring per request"
-                        .to_string(),
+                    "Cerberus TCP Monitor v0.1.0 - Dynamic socket monitoring per request".to_owned(),
                 monitor_per_request: true,
             };
 
@@ -734,7 +721,7 @@ fn main() {
                 }
 
                 // Sleep to avoid busy loop; 100ms is acceptable latency for this use case
-                std::thread::sleep(std::time::Duration::from_millis(100));
+                std::thread::sleep(core::time::Duration::from_millis(100));
             }
 
             Err(e) => eprintln!("Error accepting connection: {e}"),

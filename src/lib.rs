@@ -1148,7 +1148,7 @@ pub fn assess_connection_health_with_history(
         "HEALTHY"
     };
 
-    health.status = status.to_string();
+    health.status = status.to_owned();
     health
 }
 
@@ -1342,8 +1342,8 @@ impl ConnectionWithHealth {
     /// Used by the API to return results ordered by severity.
     #[must_use]
     pub fn cmp_by_health(&self, other: &Self) -> Ordering {
-        let self_score = self.health.as_ref().map_or(0, |h| h.score);
-        let other_score = other.health.as_ref().map_or(0, |h| h.score);
+        let self_score = self.health.as_ref().map_or(0_i32, |h| h.score);
+        let other_score = other.health.as_ref().map_or(0_i32, |h| h.score);
 
         match other_score.cmp(&self_score) {
             Ordering::Equal => other
