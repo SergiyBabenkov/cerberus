@@ -730,7 +730,7 @@ pub fn get_tcp_connection_data_via_netlink(
     remote_ip: &str,
     remote_port: u16,
 ) -> Result<crate::netlink::TcpConnectionData, String> {
-    use crate::netlink::query_tcp_connection;
+    // use crate::netlink::query_tcp_connection;
 
     query_tcp_connection(local_ip, local_port, remote_ip, remote_port).map_err(|e| format!("{e}"))
 }
