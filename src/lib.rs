@@ -450,7 +450,7 @@ pub fn find_connections_in_proc(
     let reader = BufReader::new(file);
 
     // Pre-allocate to avoid reallocations during initial growth
-    let mut connections = Vec::with_capacity(16);
+    let mut connections: Vec<ConnectionInfo> = Vec::with_capacity(16);
 
     for (line_num, line) in reader.lines().enumerate() {
         if line_num == 0 {
