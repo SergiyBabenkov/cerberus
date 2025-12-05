@@ -732,7 +732,8 @@ pub fn get_tcp_connection_data_via_netlink(
 ) -> Result<crate::netlink::TcpConnectionData, String> {
     // use crate::netlink::query_tcp_connection;
 
-    query_tcp_connection(local_ip, local_port, remote_ip, remote_port).map_err(|e| format!("{e}"))
+    crate::netlink::query_tcp_connection(local_ip, local_port, remote_ip, remote_port)
+        .map_err(|e| format!("{e}"))
 }
 
 /// Get TCP metrics for multiple connections via Netlink in a single query.
