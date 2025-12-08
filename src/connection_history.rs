@@ -15,6 +15,38 @@ use std::collections::{HashMap, VecDeque};
 use std::time::{Duration, Instant};
 
 // ============================================================================
+// TERMINOLOGY GLOSSARY
+// ============================================================================
+//
+// Send Queue (tx_queue): Bytes waiting to be transmitted. From /proc/net/tcp.
+//   Also called: transmit queue, write queue
+//
+// Send Buffer (SO_SNDBUF, sndbuf): Application-level socket buffer size.
+//   Kernel field: sndbuf_limited_us
+//
+// Receive Queue (rx_queue): Bytes received but not yet read by application.
+//   From /proc/net/tcp.
+//
+// Receiver Window (rwnd): TCP flow control - advertised receive window.
+//   Kernel field: rwnd_limited_us
+//   How much data the remote peer can accept.
+//
+// Congestion Window (cwnd, snd_cwnd): TCP flow control - sender's estimate
+//   of network capacity. Limits packets in flight.
+//
+// Retransmissions (retrans, total_retrans): Packets that had to be resent
+//   due to loss or timeout.
+//   Fields: tcpi_retrans (current), tcpi_total_retrans (cumulative)
+//
+// RTT (Round-Trip Time): Time for data to travel to remote and back.
+//   Fields: rtt_us (smoothed), rtt_var_us (variance), min_rtt_us (minimum)
+//
+// tcp_info: Linux kernel structure containing TCP connection metrics.
+//   Retrieved via Netlink INET_DIAG or ss command.
+//
+// ============================================================================
+
+// ============================================================================
 // CONSTANTS: CONFIGURATION VALUES
 // ============================================================================
 

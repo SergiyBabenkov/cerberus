@@ -115,9 +115,6 @@ fn handle_client(mut stream: TcpStream, history_manager: Arc<RwLock<HistoryManag
                             req.established_only,
                         ) {
                             Ok(conn_info) => {
-                                let (remote_ip, remote_port) =
-                                    extract_remote_parts(&conn_info.remote_address);
-
                                 // Get TCP metrics based on available implementation
                                 let (remote_ip, remote_port) =
                                     extract_remote_parts(&conn_info.remote_address);
@@ -635,8 +632,7 @@ fn main() {
     // RwLock: Many readers OR one writer (not both simultaneously)
     let history_manager = Arc::new(RwLock::new(HistoryManager::new()));
 
-    // Size thread pool based on CPU cores
-    // I/O-bound work benefits from more threads than CPU count (2x cores is typical)
+    // Size thread pool: 2x cores for I/O-bound work, clamped to 4-16 threads
     let cpu_count = std::thread::available_parallelism()
         .map(std::num::NonZero::get)
         .unwrap_or(4);
