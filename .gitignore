@@ -90,3 +90,4 @@ local_config/
 .claude/
 .claudeignore
 CLAUDE.md
+Cargo.lock
