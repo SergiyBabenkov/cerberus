@@ -9,7 +9,7 @@ use std::cmp::Ordering;
 // Manually clone fields to avoid requiring upstream types to derive Clone.
 impl Clone for ConnectionWithHealth {
     fn clone(&self) -> Self {
-        ConnectionWithHealth {
+        Self {
             connection: ConnectionInfo {
                 local_address: self.connection.local_address.clone(),
                 remote_address: self.connection.remote_address.clone(),
@@ -901,7 +901,7 @@ mod test_cmp_by_health {
                     score: 0,
                     safe_to_send: true,
                     reasons: "test".to_string(),
-                trend_metrics: None,
+                    trend_metrics: None,
                 }),
             },
             // Stale (score 7)
@@ -920,7 +920,7 @@ mod test_cmp_by_health {
                     score: 7,
                     safe_to_send: false,
                     reasons: "test".to_string(),
-                trend_metrics: None,
+                    trend_metrics: None,
                 }),
             },
             // Caution (score 1)
@@ -939,7 +939,7 @@ mod test_cmp_by_health {
                     score: 1,
                     safe_to_send: true,
                     reasons: "test".to_string(),
-                trend_metrics: None,
+                    trend_metrics: None,
                 }),
             },
         ];
@@ -1280,7 +1280,7 @@ mod test_netlink_integration {
     // - Running on non-Linux platform (tests are skipped)
 
     #[test]
-    #[ignore]  // Requires actual TCP connection, run with: cargo test -- --ignored
+    #[ignore] // Requires actual TCP connection, run with: cargo test -- --ignored
     fn test_get_tcp_metrics_via_netlink_loopback() {
         // This test assumes there's a connection on loopback (127.0.0.1)
         // You'll need to create one manually or have a service running
@@ -1294,14 +1294,10 @@ mod test_netlink_integration {
         let local_ip = "127.0.0.1";
         let local_port = 8888;
         let remote_ip = "127.0.0.1";
-        let remote_port = 54321;  // This will be ephemeral port from nc client
+        let remote_port = 54321; // This will be ephemeral port from nc client
 
-        let result = crate::get_tcp_metrics_via_netlink(
-            local_ip,
-            local_port,
-            remote_ip,
-            remote_port,
-        );
+        let result =
+            crate::get_tcp_metrics_via_netlink(local_ip, local_port, remote_ip, remote_port);
 
         // We expect either:
         // - Ok(metrics) if connection exists
@@ -1317,7 +1313,10 @@ mod test_netlink_integration {
 
                 // Basic sanity checks
                 assert!(metrics.rtt_ms >= 0.0, "RTT should be non-negative");
-                assert!(metrics.congestion_window > 0, "cwnd should be > 0 for active connection");
+                assert!(
+                    metrics.congestion_window > 0,
+                    "cwnd should be > 0 for active connection"
+                );
             }
             Err(e) => {
                 println!("Expected failure: {}", e);
@@ -1329,7 +1328,7 @@ mod test_netlink_integration {
     }
 
     #[test]
-    #[ignore]  // Requires actual TCP connections, run with: cargo test -- --ignored
+    #[ignore] // Requires actual TCP connections, run with: cargo test -- --ignored
     fn test_get_tcp_metrics_batch_netlink() {
         // This test requires multiple connections from the same local socket
         //
@@ -1340,8 +1339,18 @@ mod test_netlink_integration {
         // Terminal 4: cargo test test_get_tcp_metrics_batch_netlink -- --ignored
 
         let connections = vec![
-            ("127.0.0.1".to_string(), 8888, "127.0.0.1".to_string(), 54321),
-            ("127.0.0.1".to_string(), 8888, "127.0.0.1".to_string(), 54322),
+            (
+                "127.0.0.1".to_string(),
+                8888,
+                "127.0.0.1".to_string(),
+                54321,
+            ),
+            (
+                "127.0.0.1".to_string(),
+                8888,
+                "127.0.0.1".to_string(),
+                54322,
+            ),
         ];
 
         let results = crate::get_tcp_metrics_batch_netlink(&connections);
@@ -1349,9 +1358,10 @@ mod test_netlink_integration {
         println!("Batch query returned {} results", results.len());
 
         for (conn, metrics) in &results {
-            println!("{}:{} -> {}:{} : RTT = {:.2} ms, cwnd = {}",
-                conn.0, conn.1, conn.2, conn.3,
-                metrics.rtt_ms, metrics.congestion_window);
+            println!(
+                "{}:{} -> {}:{} : RTT = {:.2} ms, cwnd = {}",
+                conn.0, conn.1, conn.2, conn.3, metrics.rtt_ms, metrics.congestion_window
+            );
         }
 
         // We expect 0-N results depending on which connections exist
@@ -1361,16 +1371,15 @@ mod test_netlink_integration {
     #[test]
     fn test_get_tcp_metrics_via_netlink_invalid_ip() {
         // Test error handling for invalid IP address
-        let result = crate::get_tcp_metrics_via_netlink(
-            "invalid.ip.address",
-            8080,
-            "192.168.1.1",
-            5000,
-        );
+        let result =
+            crate::get_tcp_metrics_via_netlink("invalid.ip.address", 8080, "192.168.1.1", 5000);
 
         assert!(result.is_err(), "Should fail with invalid IP");
         let err_msg = result.unwrap_err();
-        assert!(err_msg.contains("Invalid"), "Error should mention invalid IP");
+        assert!(
+            err_msg.contains("Invalid"),
+            "Error should mention invalid IP"
+        );
     }
 
     #[test]
@@ -1378,9 +1387,9 @@ mod test_netlink_integration {
         // Test querying a connection that definitely doesn't exist
         // Using a non-routable IP (RFC 5737 TEST-NET-1)
         let result = crate::get_tcp_metrics_via_netlink(
-            "192.0.2.1",    // TEST-NET-1 (non-routable)
+            "192.0.2.1", // TEST-NET-1 (non-routable)
             9999,
-            "192.0.2.2",    // TEST-NET-1 (non-routable)
+            "192.0.2.2", // TEST-NET-1 (non-routable)
             9999,
         );
 
@@ -1388,12 +1397,19 @@ mod test_netlink_integration {
         // - Err("Connection not found") - connection doesn't exist
         // - Err("Permission denied") - RHEL 7 without root
         // - Err(...) - Other error (socket creation, etc.)
-        assert!(result.is_err(), "Non-existent connection should return error");
+        assert!(
+            result.is_err(),
+            "Non-existent connection should return error"
+        );
 
         let err_msg = result.unwrap_err();
         // Accept either "Connection not found" or "Permission denied"
         let valid_errors = err_msg.contains("not found") || err_msg.contains("Permission denied");
-        assert!(valid_errors, "Error should be 'not found' or 'Permission denied', got: {}", err_msg);
+        assert!(
+            valid_errors,
+            "Error should be 'not found' or 'Permission denied', got: {}",
+            err_msg
+        );
     }
 
     #[test]
@@ -1417,7 +1433,10 @@ mod test_netlink_integration {
 
         // Should return empty (no matching connections)
         // Or might return partial results if one exists
-        println!("Batch query for non-existent connections returned {} results", results.len());
+        println!(
+            "Batch query for non-existent connections returned {} results",
+            results.len()
+        );
         // This is not a test failure - just documenting behavior
     }
 }

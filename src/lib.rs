@@ -681,14 +681,14 @@ pub fn get_tcp_metrics_via_ss(
         .args([
             "-tin",
             "dst",
-            &format!("{}:{}", remote_ip, remote_port),
+            &format!("{remote_ip}:{remote_port}"),
             "src",
-            &format!("{}:{}", local_ip, local_port),
+            &format!("{local_ip}:{local_port}"),
         ])
         .stdout(Stdio::piped())
         .stderr(Stdio::null())
         .output()
-        .map_err(|e| format!("Failed to execute ss: {}", e))?;
+        .map_err(|e| format!("Failed to execute ss: {e}"))?;
 
     let output_str = String::from_utf8_lossy(&output.stdout);
     output_parsing(&output_str)
@@ -803,24 +803,31 @@ pub fn get_tcp_metrics_batch(
     let filter_parts: Vec<String> = connections
         .iter()
         .map(|(local_ip, local_port, remote_ip, remote_port)| {
-            format!(
-                "( dst {}:{} and src {}:{} )",
-                remote_ip, remote_port, local_ip, local_port
-            )
+            format!("( dst {remote_ip}:{remote_port} and src {local_ip}:{local_port} )")
         })
         .collect();
 
     let filter = filter_parts.join(" or ");
 
-    let output = match Command::new("ss")
+    // let output = match Command::new("ss")
+    //     .args(["-tin"])
+    //     .arg(&filter)
+    //     .stdout(Stdio::piped())
+    //     .stderr(Stdio::null())
+    //     .output()
+    // {
+    //     Ok(out) => out,
+    //     Err(_) => return HashMap::new(),
+    // };
+
+    let Ok(output) = Command::new("ss")
         .args(["-tin"])
         .arg(&filter)
         .stdout(Stdio::piped())
         .stderr(Stdio::null())
         .output()
-    {
-        Ok(out) => out,
-        Err(_) => return HashMap::new(),
+    else {
+        return HashMap::new();
     };
 
     let output_str = String::from_utf8_lossy(&output.stdout);
@@ -1148,7 +1155,8 @@ pub fn assess_connection_health_with_history(
         "HEALTHY"
     };
 
-    health.status = status.to_owned();
+    // health.status = status.to_owned();
+    status.clone_into(&mut health.status);
     health
 }
 
